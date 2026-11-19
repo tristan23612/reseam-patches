@@ -8,7 +8,7 @@
     "@semantic-release/changelog",
     ["@semantic-release/npm", { "npmPublish": false }],
     ["@semantic-release/exec", {
-      "prepareCmd": "just index v${nextRelease.version}"
+      "prepareCmd": "./gradlew bundle"
     }],
     ["@semantic-release/git", {
       "assets": ["CHANGELOG.md", "package.json"],

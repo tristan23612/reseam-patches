@@ -44,16 +44,8 @@ jobs:
           key: deps-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties', 'bun.lock') }}
           restore-keys: deps-${{ runner.os }}-
 
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install Node deps
-        run: bun ci
-
       - name: Build bundle
-        env:
-          RELEASE_TAG: ${{ format('v0.0.{0}', github.run_number) }}
-        run: just index "$RELEASE_TAG"
+        run: ./gradlew bundle --no-daemon
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
