@@ -1,55 +1,47 @@
-name: release
-
+name: Release
 on:
+  workflow_dispatch:
   push:
-    tags:
-      - 'v*'
-
-permissions:
-  contents: write
+    branches: [main, dev]
 
 jobs:
   release:
-    runs-on: ${{ vars.RUNNER || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/reseam/ci:2026.11.19
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     env:
-      RESEAM_BIN: ${{ github.workspace }}/engine/reseam
-      RESEAM_BUNDLE_KEY: ${{ github.workspace }}/bundle-signing.key
-      RELEASE_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BUNDLE_SIGNING_KEY_B64: ${{ secrets.BUNDLE_SIGNING_KEY_B64 }}
+      RESEAM_HOMEPAGE: ${{ github.server_url }}/${{ github.repository }}
     steps:
-      # Full history, so the release notes can list the commits since the previous tag.
       - uses: actions/checkout@v7
+        with: { fetch-depth: 0 }
+
+      - uses: actions/cache@v6
         with:
-          fetch-depth: 0
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.bun/install/cache
+            ~/.npm
+          key: deps-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties', 'bun.lock') }}
+          restore-keys: deps-${{ runner.os }}-
 
-      - uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: 17
+      - uses: oven-sh/setup-bun@v2
+      - run: bun ci
 
-      - uses: gradle/actions/setup-gradle@v6
-
-      - name: Install the Reseam CLI and signing key
-        run: |
-          mkdir -p engine
-          version=$(sed -n 's/.*id("app.reseam.workspace") version "\(.*\)".*/\1/p' settings.gradle.kts)
-          curl -fsSL -o engine/reseam https://cdn.reseam.app/engine/v$version/reseam-linux-x64
-          chmod +x engine/reseam
-          echo "${{ secrets.BUNDLE_SIGNING_KEY_B64 }}" | base64 -d > bundle-signing.key
-
-      - name: Build the bundle
-        run: ./gradlew bundle -PreleaseTag=$GITHUB_REF_NAME --no-daemon
-
-      - name: Publish the release
-        run: engine/reseam release patches build/reseam/*.reseam --tag $GITHUB_REF_NAME
-
-      - name: Update the patch list in the README
+      - name: Release
+        id: release
+        uses: cycjimmy/semantic-release-action@v8
         env:
-          BRANCH: ${{ github.event.repository.default_branch }}
-        run: |
-          engine/reseam bundle list --json build/reseam/*.reseam > build/patch-list.json
-          git checkout "$BRANCH"
-          node .github/scripts/patch-list.mjs build/patch-list.json README.md
-          git diff --quiet README.md && exit 0
-          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-            commit -m "docs: update the patch list for $GITHUB_REF_NAME" README.md
-          git push origin "$BRANCH"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Attest
+        if: steps.release.outputs.new_release_published == 'true'
+        uses: actions/attest@v4
+        with:
+          subject-path: build/reseam/*.reseam

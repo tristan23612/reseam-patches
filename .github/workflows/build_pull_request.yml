@@ -1,0 +1,63 @@
+name: Build pull request
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "PR to build"
+        required: true
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  build:
+    name: Build
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       github.actor != 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/reseam/ci:2026.11.19
+    permissions:
+      contents: read
+    env:
+      BUNDLE_SIGNING_KEY_B64: ${{ secrets.BUNDLE_SIGNING_KEY_B64 }}
+      RESEAM_HOMEPAGE: ${{ github.server_url }}/${{ github.repository }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.pr && format('refs/pull/{0}/merge', inputs.pr) || github.ref }}
+          fetch-depth: 0
+
+      - name: Cache dependencies
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.bun/install/cache
+            ~/.npm
+          key: deps-${{ runner.os }}-${{ hashFiles('**/*.gradle.kts', 'gradle/wrapper/gradle-wrapper.properties', 'bun.lock') }}
+          restore-keys: deps-${{ runner.os }}-
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Node deps
+        run: bun ci
+
+      - name: Build bundle
+        env:
+          RELEASE_TAG: ${{ format('v0.0.{0}', github.run_number) }}
+        run: just index "$RELEASE_TAG"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: reseam-patches-tristan
+          path: build/reseam/*.reseam
+          archive: false

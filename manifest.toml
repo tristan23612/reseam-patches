@@ -1,5 +1,5 @@
 [bundle]
-name = "example-patches"
-author = "Your Name"
-description = "Example patches for Reseam"
+name = "tristan-patches"
+author = "Tristan"
+description = "Reseam Patches by Tristan"
 format_version = 1
