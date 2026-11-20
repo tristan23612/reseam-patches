@@ -9,6 +9,7 @@ import app.reseam.patch.settings.section
 import app.reseam.patches.dcinside.core.DCINSIDE
 import app.reseam.patches.dcinside.core.DcinsideSettingsPages
 import app.reseam.patches.dcinside.core.dcinsideSettings
+import kotlin.text.toLong
 
 @Suppress("unused")
 val hideAds = patch(DcinsidePatchStrings.hideAds) {
@@ -26,6 +27,18 @@ val hideAds = patch(DcinsidePatchStrings.hideAds) {
                         "()Ljava/util/List;",
                     )
                 )
+            }
+
+            val adMainSmallNative = resources.id("dimen", "ad_main_small_native")?.toLong() ?: error("Could not find dimen/ad_main_small_native")
+            val adMinimum = resources.id("dimen", "ad_minimum")?.toLong() ?: error("Could not find dimen/ad_minimum")
+
+            getMinimumAdHeight(adMainSmallNative, adMinimum).apply {
+                alwaysReturn(0)
+            }
+
+            val readAdMinimum = resources.id("dimen", "read_ad_minimum")?.toLong() ?: error("Could not find dimen/read_ad_minimum")
+            footerAd(readAdMinimum).apply {
+                alwaysReturn()
             }
         }
     }

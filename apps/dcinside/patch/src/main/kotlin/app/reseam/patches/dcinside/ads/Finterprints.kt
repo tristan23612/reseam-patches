@@ -12,3 +12,21 @@ internal val advertisementList = klass("advertisementList class") {
     params(Type.String)
     returns(Type.List)
 }.single()
+
+internal fun getMinimumAdHeight(adMainSmallNative: Long, adMinimum: Long) = methods("getMinimumAdHeight method") {
+    flags(AccessFlags.PUBLIC or AccessFlags.STATIC)
+    params(Type.List)
+    returns(Type.Int)
+    literals(
+        adMainSmallNative,
+        adMinimum,
+    )
+}.single()
+
+internal fun footerAd(readAdMinimum: Long) = methods("footerAd method") {
+    flags(AccessFlags.PUBLIC or AccessFlags.FINAL)
+    returns(Type.Void)
+    literals(
+        readAdMinimum,
+    )
+}.single()
