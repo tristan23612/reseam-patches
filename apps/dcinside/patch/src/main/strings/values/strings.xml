@@ -4,4 +4,6 @@
     <string name="settings_entry_description">Adds Reseam Settings entry</string>
     <string name="hide_ads">Hide ads</string>
     <string name="hide_ads_description">Adds Reseam Settings to hide ads</string>
+    <string name="spoof_signature">Spoof Signature</string>
+    <string name="spoof_signature_description">Spoof the signature of the app so that it can bypass signature checks</string>
 </resources>
