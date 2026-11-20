@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="page_ads">광고</string>
+    <string name="page_ads_summary">광고 숨기기</string>
+    <string name="section_ads">광고</string>
+    <string name="hide_ads">광고 숨기기</string>
+    <string name="hide_ads_summary">광고 숨기기</string>
+    <string name="page_home">홈</string>
+    <string name="page_home_summary">홈 화면 구성요소 숨기기 관련 기능</string>
+    <string name="page_general">일반</string>
+    <string name="page_general_summary">일반적인 기능</string>
+    <string name="page_management">갤러리 관리</string>
+    <string name="page_management_summary">갤러리 관리와 관련된 기능</string>
+    <string name="page_misc">기타</string>
+    <string name="page_misc_summary">부가적인 기능</string>
+</resources>

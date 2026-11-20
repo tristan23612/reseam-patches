@@ -2,4 +2,6 @@
 <resources>
     <string name="settings_entry">Reseam settings entry</string>
     <string name="settings_entry_description">Adds Reseam Settings entry</string>
+    <string name="hide_ads">Hide ads</string>
+    <string name="hide_ads_description">Adds Reseam Settings to hide ads</string>
 </resources>
