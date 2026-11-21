@@ -7,6 +7,12 @@
     <string name="hide_ads_summary">광고 숨기기</string>
     <string name="page_home">홈</string>
     <string name="page_home_summary">홈 화면 구성요소 숨기기 관련 기능</string>
+    <string name="section_home">홈 화면</string>
+    <string name="hide_best_pick_item">추천 게시물 숨기기</string>
+    <string name="hide_recommended_galleries">추천 갤러리 숨기기</string>
+    <string name="hide_crowd">실북갤 리스트 숨기기</string>
+    <string name="hide_new_galleries">신규 갤러리 숨기기</string>
+    <string name="hide_recent">갤러리 바로가기 숨기기</string>
     <string name="page_general">일반</string>
     <string name="page_general_summary">일반적인 기능</string>
     <string name="page_management">갤러리 관리</string>

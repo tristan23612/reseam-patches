@@ -12,4 +12,10 @@ import app.reseam.patch.settings.toggle
 
 object DcinsideSettings : SettingsGroup(DcinsideStrings) {
     val hideAds by toggle(default = true)
+
+    val hideBestPickItem by toggle(default = false)
+    val hideRecommendedGalleries by toggle(default = false)
+    val hideCrowd by toggle(default = false)
+    val hideNewGalleries by toggle(default = false)
+    val hideRecent by toggle(default = false)
 }
