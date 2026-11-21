@@ -16,3 +16,5 @@ plugins {
 }
 
 rootProject.name = "tristan-patches"
+include("apps:dcinside:extensions:hideHomeElements")
+include("apps:dcinside:extensions:customInterceptor")
