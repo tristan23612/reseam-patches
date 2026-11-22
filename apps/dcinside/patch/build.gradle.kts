@@ -1,1 +1,1 @@
-reseamStrings { objectName = "app.example.patches.DcinsidePatchStrings" }
+reseamStrings { objectName = "app.reseam.patches.dcinside.DcinsidePatchStrings" }

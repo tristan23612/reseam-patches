@@ -1,12 +1,12 @@
 package app.reseam.patches.dcinside.core
 
-import app.example.patches.DcinsidePatchStrings
 import app.reseam.patch.Type
 import app.reseam.patch.addMethod
 import app.reseam.patch.after
 import app.reseam.patch.method
 import app.reseam.patch.patch
 import app.reseam.patch.settings.openSettings
+import app.reseam.patches.dcinside.DcinsidePatchStrings
 
 private const val CATEGORY = "reseam_settings_category"
 private const val ROW = "reseam_settings_entry"

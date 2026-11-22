@@ -1,6 +1,5 @@
 package app.reseam.patches.dcinside.home
 
-import app.example.patches.DcinsidePatchStrings
 import app.reseam.dcinside.hideHomeElements.bindings.HideHomeElements
 import app.reseam.dcinside.settings.DcinsideSettings
 import app.reseam.patch.PatchRuntime
@@ -15,6 +14,7 @@ import app.reseam.patch.point
 import app.reseam.patch.points
 import app.reseam.patch.settings.gate
 import app.reseam.patch.settings.section
+import app.reseam.patches.dcinside.DcinsidePatchStrings
 import app.reseam.patches.dcinside.core.DCINSIDE
 import app.reseam.patches.dcinside.core.DcinsideSettingsPages
 import app.reseam.patches.dcinside.core.dcinsideSettings

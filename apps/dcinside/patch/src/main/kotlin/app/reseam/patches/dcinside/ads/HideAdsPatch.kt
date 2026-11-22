@@ -1,15 +1,14 @@
 package app.reseam.patches.dcinside.ads
 
-import app.example.patches.DcinsidePatchStrings
 import app.reseam.dcinside.settings.DcinsideSettings
 import app.reseam.dcinside.settings.DcinsideStrings
 import app.reseam.patch.patch
 import app.reseam.patch.settings.gate
 import app.reseam.patch.settings.section
+import app.reseam.patches.dcinside.DcinsidePatchStrings
 import app.reseam.patches.dcinside.core.DCINSIDE
 import app.reseam.patches.dcinside.core.DcinsideSettingsPages
 import app.reseam.patches.dcinside.core.dcinsideSettings
-import kotlin.text.toLong
 
 @Suppress("unused")
 val hideAds = patch(DcinsidePatchStrings.hideAds) {
