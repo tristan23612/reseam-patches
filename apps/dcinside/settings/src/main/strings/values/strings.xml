@@ -14,6 +14,11 @@
     <string name="hide_recent">갤러리 바로가기 숨기기</string>
     <string name="page_general">일반</string>
     <string name="page_general_summary">일반적인 기능</string>
+    <string name="section_gallery">갤러리</string>
+    <string name="hide_admin_notice">운영자 공지 숨기기</string>
+    <string name="hide_admin_notice_summary">공지 탭에서 운영자 공지가 숨겨집니다.</string>
+    <string name="hide_must_read_notice">상단 공지 알림 숨기기</string>
+    <string name="hide_must_read_notice_summary">갤러리 상단의 공지가 숨겨집니다.</string>
     <string name="page_management">갤러리 관리</string>
     <string name="page_management_summary">갤러리 관리와 관련된 기능</string>
     <string name="page_misc">기타</string>

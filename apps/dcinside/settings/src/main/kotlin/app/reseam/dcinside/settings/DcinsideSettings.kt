@@ -18,4 +18,7 @@ object DcinsideSettings : SettingsGroup(DcinsideStrings) {
     val hideCrowd by toggle(default = false)
     val hideNewGalleries by toggle(default = false)
     val hideRecent by toggle(default = false)
+
+    val hideAdminNotice by toggle(default = false)
+    val hideMustReadNotice by toggle(default = false)
 }
