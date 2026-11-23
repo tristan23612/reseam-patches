@@ -21,4 +21,5 @@ object DcinsideSettings : SettingsGroup(DcinsideStrings) {
     val hideAdminNotice by toggle(default = false)
     val hideMustReadNotice by toggle(default = false)
     val disablePostPum by toggle(default = false)
+    val hidePostBottomLikeView by toggle(default = false)
 }

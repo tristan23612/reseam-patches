@@ -19,9 +19,12 @@
     <string name="hide_admin_notice_summary">공지 탭에서 운영자 공지가 숨겨집니다.</string>
     <string name="hide_must_read_notice">상단 공지 알림 숨기기</string>
     <string name="hide_must_read_notice_summary">갤러리 상단의 공지가 숨겨집니다.</string>
-    <string name="section_write">글 작성</string>
-    <string name="disable_post_pum">글 작성 시 펌 금지</string>
-    <string name="disable_post_pum_summary">글 작성 시 펌 금지 옵션을 기본적으로 활성화합니다.</string>
+    <string name="section_write">게시글 작성</string>
+    <string name="disable_post_pum">게시글 작성 시 펌 금지</string>
+    <string name="disable_post_pum_summary">게시글 작성 시 펌 금지 옵션을 기본적으로 활성화합니다.</string>
+    <string name="section_post">게시글</string>
+    <string name="hide_post_bottom_like_view">댓글 하단 게시글 목록 숨기기</string>
+    <string name="hide_post_bottom_like_view_summary">댓글 하단의 게시글 목록이 숨겨집니다.</string>
     <string name="page_management">갤러리 관리</string>
     <string name="page_management_summary">갤러리 관리와 관련된 기능</string>
     <string name="page_misc">기타</string>
