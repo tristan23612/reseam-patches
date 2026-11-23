@@ -12,4 +12,6 @@
     <string name="hide_admin_notice_description">Adds Reseam Settings to hide admin notice</string>
     <string name="hide_must_read_notice">Hide must read notice</string>
     <string name="hide_must_read_notice_description">Adds Reseam Settings to hide must read notice</string>
+    <string name="disable_post_pum">Disable post pum option</string>
+    <string name="disable_post_pum_description">Adds Reseam Settings to disable post pum option</string>
 </resources>
