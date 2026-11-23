@@ -10,6 +10,6 @@ val spoofSignature = patch(DcinsidePatchStrings.spoofSignature) {
     compatibleWith(DCINSIDE)
 
     execute {
-        appEntry { SpoofSignature.install() }
+        appEntry { SpoofSignature.install(application) }
     }
 }

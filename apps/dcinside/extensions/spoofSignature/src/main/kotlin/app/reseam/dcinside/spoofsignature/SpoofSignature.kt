@@ -2,6 +2,7 @@
 
 package app.reseam.dcinside.spoofsignature
 
+import android.app.Application
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.Signature
@@ -13,7 +14,6 @@ import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.lang.reflect.Field
 
 private const val PACKAGE_NAME = "com.dcinside.app.android"
-private const val CHANGED_PACKAGE_NAME = "com.dcinside.app.android.revanced"
 
 private const val CERTIFICATE_DATA =
     "MIIFiTCCA3GgAwIBAgIVAK/29kxj016lyXYxZeM/LGWGIuWIMA0GCSqGSIb3DQEB" +
@@ -53,8 +53,10 @@ private var installed = false
 /** Installs the PackageInfo signature replacement once in this app process. */
 @Export
 @Synchronized
-fun install() {
+fun install(application: Application) {
     if (installed) return
+
+    val changedPackageName = application.packageName
 
     val fakeSignature = Signature(Base64.decode(CERTIFICATE_DATA, Base64.DEFAULT))
     val creatorField = getFieldAccessible(PackageInfo::class.java, "CREATOR")
@@ -65,7 +67,9 @@ fun install() {
         @Suppress("DEPRECATION")
         override fun createFromParcel(source: Parcel): PackageInfo {
             val packageInfo = originalCreator.createFromParcel(source)
-            if (packageInfo.packageName == PACKAGE_NAME || packageInfo.packageName == CHANGED_PACKAGE_NAME) {
+            if (packageInfo.packageName == PACKAGE_NAME ||
+                packageInfo.packageName == changedPackageName
+            ) {
                 packageInfo.signatures?.takeIf { it.isNotEmpty() }?.set(0, fakeSignature)
                 packageInfo.signingInfo?.apkContentsSigners
                     ?.takeIf { it.isNotEmpty() }
