@@ -36,7 +36,7 @@ private class DcinsideInterceptor : Interceptor {
         val response = chain.proceed(request)
         if (!isTargetRequest) return response
 
-        val body = response.body ?: return response
+        val body = response.body
         val originalBytes = body.bytes()
         val contentType = body.contentType()
 
