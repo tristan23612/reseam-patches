@@ -8,4 +8,8 @@
     <string name="hide_home_elements_description">Adds Reseam Settings to hide home elements</string>
     <string name="spoof_signature">Spoof Signature</string>
     <string name="spoof_signature_description">Spoof the signature of the app so that it can bypass signature checks</string>
+    <string name="change_package_name">Change package name</string>
+    <string name="change_package_name_description">Changes the package name of the app</string>
+    <string name="change_package_name_package_name">Package name</string>
+    <string name="change_package_name_package_name_description">The new package name. Empty adds .reseam to the original.</string>
 </resources>
