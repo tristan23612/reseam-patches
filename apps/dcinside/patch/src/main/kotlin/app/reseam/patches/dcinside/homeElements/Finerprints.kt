@@ -1,4 +1,4 @@
-package app.reseam.patches.dcinside.home
+package app.reseam.patches.dcinside.homeElements
 
 import app.reseam.patch.methods
 
