@@ -2,6 +2,7 @@ package app.reseam.patches.dcinside.home
 
 import app.reseam.dcinside.hideHomeElements.bindings.HideHomeElements
 import app.reseam.dcinside.settings.DcinsideSettings
+import app.reseam.dcinside.settings.DcinsideStrings
 import app.reseam.patch.PatchRuntime
 import app.reseam.patch.Type
 import app.reseam.patch.after
@@ -27,7 +28,7 @@ val hideHomeElements = patch(DcinsidePatchStrings.hideHomeElements) {
         dcinsideSettings,
         section(
             DcinsideSettingsPages.Home,
-            DcinsidePatchStrings.hideHomeElements,
+            DcinsideStrings.sectionHideHomeElements,
             DcinsideSettings.hideBestPickItem,
             DcinsideSettings.hideRecommendedGalleries,
             DcinsideSettings.hideCrowd,
