@@ -13,7 +13,6 @@ interface JsonResponseFilter {
     val id: String
     val order: Int get() = 0
 
-    fun register()
     fun isEnabled(): Boolean = true
     fun matches(context: JsonResponseContext): Boolean = true
     fun apply(context: JsonResponseContext, json: JSONObject): JSONObject

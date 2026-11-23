@@ -7,7 +7,8 @@ import org.json.JSONObject
 @Export
 object HideMustReadNoticeFilter : JsonResponseFilter {
     @Export
-    override fun register() {
+    @JvmStatic
+    fun register() {
         JsonResponseFilters.register(this)
     }
 

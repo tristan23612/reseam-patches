@@ -8,7 +8,8 @@ import org.json.JSONObject
 @Export
 object HideAdminNoticeFilter : JsonResponseFilter {
     @Export
-    override fun register() {
+    @JvmStatic
+    fun register() {
         JsonResponseFilters.register(this)
     }
 
