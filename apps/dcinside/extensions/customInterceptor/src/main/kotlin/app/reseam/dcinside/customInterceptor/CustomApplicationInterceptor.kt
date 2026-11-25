@@ -13,6 +13,7 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.text.chunked
 
 @Export
 fun register(builder: okhttp3.OkHttpClient.Builder?) {
@@ -22,7 +23,7 @@ fun register(builder: okhttp3.OkHttpClient.Builder?) {
 
 private class DcinsideInterceptor : Interceptor {
     private val tag = "DcinsideInterceptor"
-    private val targetPaths = listOf("gall_list_new", "gall_view_new")
+    private val targetPaths = listOf("gall_list_new", "gall_view_new", "comment_new")
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
@@ -37,8 +38,8 @@ private class DcinsideInterceptor : Interceptor {
         if (!isTargetRequest) return response
 
         val body = response.body
-        val originalBytes = body.bytes()
         val contentType = body.contentType()
+        val originalBytes = body.bytes()
 
         return try {
             val charset = contentType?.charset(Charsets.UTF_8) ?: Charsets.UTF_8
@@ -49,6 +50,7 @@ private class DcinsideInterceptor : Interceptor {
             updateResponseState(json, isListRequest)
 
             val filteredJson = JsonResponseFilters.apply(context, json)
+            copyUserIds(filteredJson, path)
             responseWithBody(response, filteredJson.toString().toByteArray(charset), contentType)
         } catch (exception: Exception) {
             Log.e(tag, "Failed to process JSON response from $path", exception)
@@ -57,6 +59,43 @@ private class DcinsideInterceptor : Interceptor {
         }
     }
 
+    private fun copyUserIds(response: JSONArray, path: String) {
+        when {
+            path.contains("gall_list_new") -> {
+                for (index in 0 until response.length()) {
+                    val payload = response.optJSONObject(index) ?: continue
+                    val posts = payload.optJSONArray("gall_list") ?: continue
+                    for (postIndex in 0 until posts.length()) {
+                        posts.optJSONObject(postIndex)?.copyUserIdToReseamKey()
+                    }
+                }
+            }
+
+            path.contains("gall_view_new") -> {
+                for (index in 0 until response.length()) {
+                    response.optJSONObject(index)
+                        ?.optJSONObject("view_info")
+                        ?.copyUserIdToReseamKey()
+                }
+            }
+
+            path.contains("comment_new") -> {
+                for (index in 0 until response.length()) {
+                    val payload = response.optJSONObject(index) ?: continue
+                    val comments = payload.optJSONArray("comment_list") ?: continue
+                    for (commentIndex in 0 until comments.length()) {
+                        comments.optJSONObject(commentIndex)?.copyUserIdToReseamKey()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun JSONObject.copyUserIdToReseamKey() {
+        if (has("user_id") && !isNull("user_id")) {
+            put("reseam_user_id", get("user_id"))
+        }
+    }
     private fun effectiveUrl(request: Request): Uri? {
         val requestUrl = request.url
         if (requestUrl.encodedPath != "/api/redirect.php") return Uri.parse(requestUrl.toString())

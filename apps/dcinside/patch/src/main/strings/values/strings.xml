@@ -16,4 +16,8 @@
     <string name="disable_post_pum_description">Adds Reseam Settings to disable post pum option</string>
     <string name="hide_post_bottom_like_view">Hide post bottom like view</string>
     <string name="hide_post_bottom_like_view_description">Adds Reseam Settings to hide post bottom like view</string>
+    <string name="show_user_id">Show user id</string>
+    <string name="show_user_id_description">Adds Reseam Settings to show user id</string>
+    <string name="enable_user_id_direct_scope">Enable userId direct scope</string>
+    <string name="enable_user_id_direct_scope_description">Adds Reseam Settings to enable userId direct scope</string>
 </resources>

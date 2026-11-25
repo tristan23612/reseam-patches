@@ -27,6 +27,11 @@
     <string name="hide_post_bottom_like_view_summary">댓글 하단의 게시글 목록이 숨겨집니다.</string>
     <string name="page_management">갤러리 관리</string>
     <string name="page_management_summary">갤러리 관리와 관련된 기능</string>
+    <string name="section_floating_button">플로팅 버튼</string>
+    <string name="section_spam">순회</string>
+    <string name="section_user_id">식별코드</string>
+    <string name="show_user_id">식별코드 표시</string>
+    <string name="enable_user_id_direct_scope">식별코드를 눌러 갤스코프 진입</string>
     <string name="page_misc">기타</string>
     <string name="page_misc_summary">부가적인 기능</string>
 </resources>

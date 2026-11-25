@@ -22,4 +22,6 @@ object DcinsideSettings : SettingsGroup(DcinsideStrings) {
     val hideMustReadNotice by toggle(default = false)
     val disablePostPum by toggle(default = false)
     val hidePostBottomLikeView by toggle(default = false)
+    val showUserId by toggle(default = false)
+    val enableUserIdDirectScope by toggle(default = false)
 }
