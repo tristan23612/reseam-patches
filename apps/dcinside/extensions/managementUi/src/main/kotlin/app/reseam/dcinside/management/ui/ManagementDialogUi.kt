@@ -14,7 +14,7 @@ import app.reseam.runtime.ui.Ui
 
 /** Shared entry point for management dialogs using the user's ReSeam appearance. */
 object ManagementDialogUi {
-    private const val BUNDLE_NAME = "dcinside"
+    private const val BUNDLE_NAME = "tristan-patches"
 
     /** Creates a ReSeam UI whose colors follow the appearance selected in ReSeam settings. */
     @JvmStatic

@@ -1,6 +1,7 @@
 package app.reseam.patches.dcinside.manager.postLongPress
 
 import app.reseam.dcinside.customInterceptor.bindings.CustomApplicationInterceptor
+import app.reseam.dcinside.postLongPress.bindings.PostLongPress
 import app.reseam.dcinside.settings.DcinsideSettings
 import app.reseam.dcinside.settings.DcinsideStrings
 import app.reseam.patch.Type
@@ -12,6 +13,7 @@ import app.reseam.patch.types.AnnotationElement
 import app.reseam.patch.types.AnnotationItem
 import app.reseam.patch.types.EncodedVal
 import app.reseam.patch.types.NewField
+import app.reseam.patches.dcinside.DcinsidePatchStrings
 import app.reseam.patches.dcinside.core.DCINSIDE
 import app.reseam.patches.dcinside.core.DcinsideSettingsPages
 import app.reseam.patches.dcinside.core.dcinsideSettings
@@ -20,7 +22,8 @@ import app.reseam.patches.dcinside.customInterceptor.customInterceptor
 internal const val POST_ITEM_CLASS = "com.dcinside.app.response.PostItem"
 
 @Suppress("unused")
-val postLongPress = patch {
+val postLongPress = patch(DcinsidePatchStrings.postLongPress) {
+    description(DcinsidePatchStrings.postLongPressDescription)
     compatibleWith(DCINSIDE)
     dependsOn(customInterceptor)
     settings(
@@ -35,6 +38,7 @@ val postLongPress = patch {
     execute {
         appEntry {
             CustomApplicationInterceptor.postLongPress(string(DcinsideSettings.postLongPress.key), bool(DcinsideSettings.postLongPress.default))
+            PostLongPress.postLongPress(string(DcinsideSettings.postLongPress.key), bool(DcinsideSettings.postLongPress.default))
         }
 
         val annotationDescriptor = klass("annotation class") {
@@ -88,7 +92,7 @@ val postLongPress = patch {
                 val noField = klass(POST_ITEM_CLASS).field("reseamNo")
                 val itemView = param(0).fieldOfType(Type.View)
 
-                //call(PostLongPress.setLongClickListener, itemView, capture("postItem").field(noField))
+                call(PostLongPress.setLongClickListener, itemView, capture("postItem").field(noField))
             }
     }
 }
