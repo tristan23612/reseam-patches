@@ -104,7 +104,6 @@ private class PostManagementSession(
         ConfirmBlock,
         ConfirmDelete,
         Deleting,
-        BlockStarted,
         Deleted,
         Failed,
     }
@@ -138,11 +137,6 @@ private class PostManagementSession(
             .title("게시글 삭제")
             .message("게시글을 삭제하고 있습니다.")
             .dismissAction("백그라운드")
-
-        Step.BlockStarted -> ui.dialog()
-            .title("게시글 차단")
-            .message("차단 화면을 열었습니다.")
-            .dismissAction("확인")
 
         Step.Deleted -> ui.dialog()
             .title("게시글 삭제")
@@ -199,7 +193,7 @@ private class PostManagementSession(
                 putExtra(EXTRA_POST_NUMBER, postNo)
             }
             activity.startActivityForResult(intent, BLOCK_REQUEST_CODE)
-            transitionTo(Step.BlockStarted)
+            dismiss()
         } catch (exception: Exception) {
             failureMessage = exception.message ?: "차단 화면을 열지 못했습니다."
             transitionTo(Step.Failed)
