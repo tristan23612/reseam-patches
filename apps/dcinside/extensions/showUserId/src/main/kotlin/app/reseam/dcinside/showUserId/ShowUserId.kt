@@ -13,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import app.reseam.dcinside.customInterceptor.DcinsideState
 import app.reseam.runtime.Export
+import app.reseam.runtime.ToggleValue
 
 private const val USER_ID_VIEW_NAME = "reseam_user_id"
 private const val GALLERY_DATA_VIEW_NAME = "reseam_gallery_data_space"
@@ -24,9 +25,16 @@ private val MEMO_VIEW_NAMES = arrayOf(
     "post_list_item_counts",
 )
 
+@Volatile private var showUserIdToggleValue: ToggleValue? = null
+
+@Export
+fun showUserId(key: String, defaultValue: Boolean) {
+    showUserIdToggleValue = ToggleValue("tristan-patches", key, defaultValue)
+}
+
 @Export
 fun setUserId(itemView: View?, userId: String?) {
-    if (itemView == null) return
+    if (itemView == null || showUserIdToggleValue?.value != true) return
 
     val galleryDataView = itemView.findNamedView(GALLERY_DATA_VIEW_NAME)
     galleryDataView?.tag = mapOf(
@@ -54,7 +62,7 @@ fun setUserId(itemView: View?, userId: String?) {
 
 @Export
 fun addUserId(userName: String, userId: String?): String =
-    if (!userId.isNullOrEmpty()) {
+    if (!userId.isNullOrEmpty() && (showUserIdToggleValue?.value == true)) {
         "$userName (${userId})"
     } else {
         userName

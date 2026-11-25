@@ -1,5 +1,6 @@
 package app.reseam.patches.dcinside.manager.userId
 
+import app.reseam.dcinside.customInterceptor.bindings.CustomApplicationInterceptor
 import app.reseam.dcinside.settings.DcinsideSettings
 import app.reseam.dcinside.settings.DcinsideStrings
 import app.reseam.dcinside.showUserId.bindings.ShowUserId
@@ -97,130 +98,133 @@ val showUserId = patch(DcinsidePatchStrings.showUserId) {
             )
         }
 
-        gate(DcinsideSettings.showUserId) {
-            val postList = getPostList()
-            val postSearchList = getPostSearchList()
-            val postHeader = getPostHeader()
-            val comment = getComment()
+        appEntry {
+            CustomApplicationInterceptor.showUserId(string(DcinsideSettings.showUserId.key), bool(DcinsideSettings.showUserId.default))
+            ShowUserId.showUserId(string(DcinsideSettings.showUserId.key), bool(DcinsideSettings.showUserId.default))
+        }
 
-            val annotationDescriptor = klass("annotation class") {
-                implements("java.lang.annotation.Annotation")
-                custom {
-                    val names = methods.map { it.name }.toSet()
-                    names.containsAll(setOf("value", "alternate"))
-                }
-            }.descriptor
+        val postList = getPostList()
+        val postSearchList = getPostSearchList()
+        val postHeader = getPostHeader()
+        val comment = getComment()
 
-            val annotationItem = AnnotationItem(
-                visibility = 1u.toUByte(),
-                annotationType = annotationDescriptor,
-                elements = listOf(
-                    AnnotationElement(
-                        "value",
-                        EncodedVal.StringVal("reseam_user_id"),
-                    ),
+        val annotationDescriptor = klass("annotation class") {
+            implements("java.lang.annotation.Annotation")
+            custom {
+                val names = methods.map { it.name }.toSet()
+                names.containsAll(setOf("value", "alternate"))
+            }
+        }.descriptor
+
+        val annotationItem = AnnotationItem(
+            visibility = 1u.toUByte(),
+            annotationType = annotationDescriptor,
+            elements = listOf(
+                AnnotationElement(
+                    "value",
+                    EncodedVal.StringVal("reseam_user_id"),
                 ),
+            ),
+        )
+
+        listOf(
+            klass(POST_ITEM_CLASS),
+            klass(POST_INFO_CLASS),
+            klass(comment.parameterTypes[2])
+        ).forEach { klass ->
+            klass.classDef.addField(
+                NewField(
+                    name = "reseamUserId",
+                    fieldType = "Ljava/lang/String;",
+                    accessFlags = AccessFlags.PUBLIC.toUInt()
+                )
             )
 
-            listOf(
-                klass(POST_ITEM_CLASS),
-                klass(POST_INFO_CLASS),
-                klass(comment.parameterTypes[2])
-            ).forEach { klass ->
-                klass.classDef.addField(
-                    NewField(
-                        name = "reseamUserId",
-                        fieldType = "Ljava/lang/String;",
-                        accessFlags = AccessFlags.PUBLIC.toUInt()
-                    )
+            klass.classDef.addFieldAnnotation(
+                "reseamUserId",
+                annotationItem
+            )
+        }
+
+        listOf(
+            postList,
+            postSearchList
+        ).forEach { method ->
+            method.point { invokeVirtual { name("getContext") } }
+                .next { invokeVirtual { returns(POST_ITEM_CLASS) } }
+                .next { resultOf(POST_ITEM_CLASS) }
+                .captureAs("postItem", POST_ITEM_CLASS)
+                .next { opcode(Opcode.RETURN_VOID) }
+                .before {
+                    val userIdField = klass(POST_ITEM_CLASS).field("reseamUserId")
+                    val itemView = param(0).fieldOfType(Type.View)
+
+                    call(ShowUserId.setUserId, itemView, capture("postItem").field(userIdField))
+                }
+        }
+
+        postHeader.after {
+            val userIdField = klass(POST_INFO_CLASS).field("reseamUserId")
+            val userId = param(0).field(userIdField)
+
+            call(ShowUserId.setUserId, thisObject, userId)
+        }
+
+        comment.point {
+            invokeVirtual {
+                owner(comment.parameterTypes[0])
+                paramCount(0)
+            }
+        }.let {
+            val viewMethod = (it.instruction as Instruction.Invoke).field0.method.name
+            val viewType = (it.instruction as Instruction.Invoke).field0.method.returnType
+            comment.before {
+                val userIdField = klass(comment.parameterTypes[2]).field("reseamUserId")
+                val userId = param(2).field(userIdField)
+                val view = param(0).callVirtual(
+                    comment.parameterTypes[0],
+                    viewMethod,
+                    "()$viewType",
                 )
 
-                klass.classDef.addFieldAnnotation(
-                    "reseamUserId",
-                    annotationItem
-                )
+                call(ShowUserId.setUserId, view, userId)
             }
+        }
 
-            listOf(
-                postList,
-                postSearchList
-            ).forEach { method ->
-                method.point { invokeVirtual { name("getContext") } }
-                    .next { invokeVirtual { returns(POST_ITEM_CLASS) } }
-                    .next { resultOf(POST_ITEM_CLASS) }
-                    .captureAs("postItem", POST_ITEM_CLASS)
-                    .next { opcode(Opcode.RETURN_VOID) }
-                    .before {
-                        val userIdField = klass(POST_ITEM_CLASS).field("reseamUserId")
-                        val itemView = param(0).fieldOfType(Type.View)
-
-                        call(ShowUserId.setUserId, itemView, capture("postItem").field(userIdField))
-                    }
-            }
-
-            postHeader.after {
-                val userIdField = klass(POST_INFO_CLASS).field("reseamUserId")
-                val userId = param(0).field(userIdField)
-
-                call(ShowUserId.setUserId, thisObject, userId)
-            }
-
-            comment.point {
-                invokeVirtual {
-                    owner(comment.parameterTypes[0])
-                    paramCount(0)
+        history().forEach {
+            points {
+                invokeStatic {
+                    name("currentTimeMillis")
                 }
-            }.let {
-                val viewMethod = (it.instruction as Instruction.Invoke).field0.method.name
-                val viewType = (it.instruction as Instruction.Invoke).field0.method.returnType
-                comment.before {
-                    val userIdField = klass(comment.parameterTypes[2]).field("reseamUserId")
-                    val userId = param(2).field(userIdField)
-                    val view = param(0).callVirtual(
-                        comment.parameterTypes[0],
-                        viewMethod,
-                        "()$viewType",
-                    )
-
-                    call(ShowUserId.setUserId, view, userId)
+            }.forEach {
+                previous {
+                    invokeVirtual {
+                        owner(POST_INFO_CLASS)
+                        returns(Type.String)
+                    }
                 }
-            }
-
-            history().forEach {
-                points {
-                    invokeStatic {
-                        name("currentTimeMillis")
+                .captureArgumentAs("postInfo", 0, POST_INFO_CLASS)
+                .let {
+                    val savedPostInfo = it.method.reserveLocal("savedPostInfo", POST_INFO_CLASS)
+                    it.before {
+                        local(savedPostInfo).assign(capture("postInfo"))
                     }
-                }.forEach {
-                    previous {
-                        invokeVirtual {
-                            owner(POST_INFO_CLASS)
-                            returns(Type.String)
+
+                    it.next { resultOf(Type.String) }
+                        .captureAs("name", Type.String)
+                        .after {
+                            val userIdField = klass(POST_INFO_CLASS).field("reseamUserId")
+                            val userId = local(savedPostInfo).field(userIdField)
+                            val name = capture("name")
+
+                            name.assign(
+                                call(
+                                    ShowUserId.addUserId,
+                                    name,
+                                    userId,
+                                ),
+                            )
                         }
-                    }
-                    .captureArgumentAs("postInfo", 0, POST_INFO_CLASS)
-                    .let {
-                        val savedPostInfo = it.method.reserveLocal("savedPostInfo", POST_INFO_CLASS)
-                        it.before {
-                            local(savedPostInfo).assign(capture("postInfo"))
-                        }
-
-                        it.next { resultOf(Type.String) }
-                            .captureAs("name", Type.String)
-                            .after {
-                                val userIdField = klass(POST_INFO_CLASS).field("reseamUserId")
-                                val userId = local(savedPostInfo).field(userIdField)
-                                val name = capture("name")
-
-                                name.assign(
-                                    call(
-                                        ShowUserId.addUserId,
-                                        name,
-                                        userId,
-                                    ),
-                                )
-                            }
-                    }
                 }
             }
         }

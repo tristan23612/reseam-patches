@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Base64
 import android.util.Log
 import app.reseam.runtime.Export
+import app.reseam.runtime.ToggleValue
 import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.Request
@@ -13,12 +14,23 @@ import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.json.JSONArray
 import org.json.JSONObject
-import kotlin.text.chunked
 
 @Export
 fun register(builder: okhttp3.OkHttpClient.Builder?) {
     if (builder == null || builder.interceptors().any { it is DcinsideInterceptor }) return
     builder.addInterceptor(DcinsideInterceptor())
+}
+
+@Volatile private var showUserIdToggleValue: ToggleValue? = null
+@Volatile private var postLongPressToggleValue: ToggleValue? = null
+
+@Export
+fun showUserId(key: String, defaultValue: Boolean) {
+    showUserIdToggleValue = ToggleValue("tristan-patches", key, defaultValue)
+}
+@Export
+fun postLongPress(key: String, defaultValue: Boolean) {
+    postLongPressToggleValue = ToggleValue("tristan-patches", key, defaultValue)
 }
 
 private class DcinsideInterceptor : Interceptor {
@@ -50,7 +62,7 @@ private class DcinsideInterceptor : Interceptor {
             updateResponseState(json, isListRequest)
 
             val filteredJson = JsonResponseFilters.apply(context, json)
-            copyUserIds(filteredJson, path)
+            copyKey(filteredJson, path, "user_id")
             responseWithBody(response, filteredJson.toString().toByteArray(charset), contentType)
         } catch (exception: Exception) {
             Log.e(tag, "Failed to process JSON response from $path", exception)
@@ -59,14 +71,14 @@ private class DcinsideInterceptor : Interceptor {
         }
     }
 
-    private fun copyUserIds(response: JSONArray, path: String) {
+    private fun copyKey(response: JSONArray, path: String, key: String) {
         when {
             path.contains("gall_list_new") -> {
                 for (index in 0 until response.length()) {
                     val payload = response.optJSONObject(index) ?: continue
                     val posts = payload.optJSONArray("gall_list") ?: continue
                     for (postIndex in 0 until posts.length()) {
-                        posts.optJSONObject(postIndex)?.copyUserIdToReseamKey()
+                        posts.optJSONObject(postIndex)?.copyKeyToReseamKey(key)
                     }
                 }
             }
@@ -75,7 +87,7 @@ private class DcinsideInterceptor : Interceptor {
                 for (index in 0 until response.length()) {
                     response.optJSONObject(index)
                         ?.optJSONObject("view_info")
-                        ?.copyUserIdToReseamKey()
+                        ?.copyKeyToReseamKey(key)
                 }
             }
 
@@ -84,18 +96,19 @@ private class DcinsideInterceptor : Interceptor {
                     val payload = response.optJSONObject(index) ?: continue
                     val comments = payload.optJSONArray("comment_list") ?: continue
                     for (commentIndex in 0 until comments.length()) {
-                        comments.optJSONObject(commentIndex)?.copyUserIdToReseamKey()
+                        comments.optJSONObject(commentIndex)?.copyKeyToReseamKey(key)
                     }
                 }
             }
         }
     }
 
-    private fun JSONObject.copyUserIdToReseamKey() {
-        if (has("user_id") && !isNull("user_id")) {
-            put("reseam_user_id", get("user_id"))
+    private fun JSONObject.copyKeyToReseamKey(key: String) {
+        if (has(key) && !isNull(key)) {
+            put("reseam_$key", get(key))
         }
     }
+
     private fun effectiveUrl(request: Request): Uri? {
         val requestUrl = request.url
         if (requestUrl.encodedPath != "/api/redirect.php") return Uri.parse(requestUrl.toString())
