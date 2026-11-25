@@ -53,9 +53,9 @@ fun setUserId(itemView: View?, userId: String?) {
 }
 
 @Export
-fun addUserId(userName: String, userId: String?, userIp: String?): String =
-    if (!userId.isNullOrEmpty() || !userIp.isNullOrEmpty()) {
-        "$userName (${userId.orEmpty()}${userIp.orEmpty()})"
+fun addUserId(userName: String, userId: String?): String =
+    if (!userId.isNullOrEmpty()) {
+        "$userName (${userId})"
     } else {
         userName
     }

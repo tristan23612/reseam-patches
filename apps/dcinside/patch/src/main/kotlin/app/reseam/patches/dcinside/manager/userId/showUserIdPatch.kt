@@ -20,8 +20,8 @@ import app.reseam.patches.dcinside.core.DcinsideSettingsPages
 import app.reseam.patches.dcinside.core.dcinsideSettings
 import app.reseam.patches.dcinside.customInterceptor.customInterceptor
 
-private val POST_ITEM_CLASS = "com.dcinside.app.response.PostItem"
-private val POST_INFO_CLASS = "com.dcinside.app.model.PostInfo"
+internal const val POST_ITEM_CLASS = "com.dcinside.app.response.PostItem"
+internal const val POST_INFO_CLASS = "com.dcinside.app.model.PostInfo"
 
 @Suppress("unused")
 val showUserId = patch(DcinsidePatchStrings.showUserId) {
@@ -183,6 +183,44 @@ val showUserId = patch(DcinsidePatchStrings.showUserId) {
                     )
 
                     call(ShowUserId.setUserId, view, userId)
+                }
+            }
+
+            history().forEach {
+                points {
+                    invokeStatic {
+                        name("currentTimeMillis")
+                    }
+                }.forEach {
+                    previous {
+                        invokeVirtual {
+                            owner(POST_INFO_CLASS)
+                            returns(Type.String)
+                        }
+                    }
+                    .captureArgumentAs("postInfo", 0, POST_INFO_CLASS)
+                    .let {
+                        val savedPostInfo = it.method.reserveLocal("savedPostInfo", POST_INFO_CLASS)
+                        it.before {
+                            local(savedPostInfo).assign(capture("postInfo"))
+                        }
+
+                        it.next { resultOf(Type.String) }
+                            .captureAs("name", Type.String)
+                            .after {
+                                val userIdField = klass(POST_INFO_CLASS).field("reseamUserId")
+                                val userId = local(savedPostInfo).field(userIdField)
+                                val name = capture("name")
+
+                                name.assign(
+                                    call(
+                                        ShowUserId.addUserId,
+                                        name,
+                                        userId,
+                                    ),
+                                )
+                            }
+                    }
                 }
             }
         }

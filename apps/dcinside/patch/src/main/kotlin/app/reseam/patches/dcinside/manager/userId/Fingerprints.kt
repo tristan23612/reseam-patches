@@ -45,3 +45,8 @@ internal fun getComment() = methods("reply method") {
     )
     returns(Type.Void)
 }.single()
+
+internal fun history() = methods("history method") {
+    strings("postHistoryEnabled")
+    calls { name("currentTimeMillis") }
+}
