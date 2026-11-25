@@ -3,10 +3,10 @@
 package app.reseam.dcinside.postLongPress
 
 import android.app.Activity
-import android.content.ComponentName
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.view.View
 import app.reseam.dcinside.customInterceptor.DcinsideState
 import app.reseam.dcinside.management.ui.ManagementDialogSession
@@ -22,6 +22,7 @@ import java.net.URL
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.Executors
+import java.util.WeakHashMap
 
 private const val BLOCK_ACTIVITY = "com.dcinside.app.manager.MinorExtActivity"
 private const val BLOCK_ACTION = "action_block"
@@ -42,17 +43,48 @@ fun postLongPress(key: String, defaultValue: Boolean) {
 private val deleteExecutor = Executors.newSingleThreadExecutor { runnable ->
     Thread(runnable, "dcinside-post-delete").apply { isDaemon = true }
 }
+private data class RowDefaults(
+    val foreground: Drawable?,
+    val clickable: Boolean,
+    val longClickable: Boolean,
+)
+
+private val rowDefaults = WeakHashMap<View, RowDefaults>()
+private val boundPostNumbers = WeakHashMap<View, Int>()
 
 /** Adds the management menu to a post row when the current user is a gallery manager. */
 @Export
 fun setLongClickListener(itemView: View?, postNo: Int) {
-    if (postLongPressToggleValue?.value != true) return
     itemView ?: return
+    synchronized(boundPostNumbers) {
+        boundPostNumbers[itemView] = postNo
+    }
 
-    if (postNo <= 0 || DcinsideState.isGalleryManager != true) {
+    val defaults = synchronized(rowDefaults) {
+        rowDefaults.getOrPut(itemView) {
+            RowDefaults(itemView.foreground, itemView.isClickable, itemView.isLongClickable)
+        }
+    }
+
+    // RecyclerView reuses the same row view. Restore the app's normal state before
+    // deciding whether this bind should enable management actions.
+    itemView.alpha = 1f
+    itemView.foreground = defaults.foreground
+    itemView.isClickable = defaults.clickable
+    itemView.isLongClickable = defaults.longClickable
+
+    if (postLongPressToggleValue?.value != true || postNo <= 0 || DcinsideState.isGalleryManager != true) {
         itemView.setOnLongClickListener(null)
-        itemView.isLongClickable = false
         return
+    }
+
+    val attributes = itemView.context.obtainStyledAttributes(
+        intArrayOf(android.R.attr.selectableItemBackground),
+    )
+    try {
+        itemView.foreground = attributes.getDrawable(0)
+    } finally {
+        attributes.recycle()
     }
 
     itemView.isLongClickable = true
@@ -130,10 +162,16 @@ private class PostManagementSession(
             val result = deletePost(context, postNo)
             android.os.Handler(android.os.Looper.getMainLooper()).post {
                 if (result.isSuccess) {
-                    postView.alpha = 0.5f
-                    postView.isClickable = false
-                    postView.isLongClickable = false
-                    postView.setOnLongClickListener(null)
+                    val stillBoundToDeletedPost = synchronized(boundPostNumbers) {
+                        boundPostNumbers[postView] == postNo
+                    }
+                    if (stillBoundToDeletedPost) {
+                        postView.alpha = 0.5f
+                        postView.isClickable = false
+                        postView.isLongClickable = false
+                        postView.foreground = null
+                        postView.setOnLongClickListener(null)
+                    }
                     transitionTo(Step.Deleted)
                 } else {
                     failureMessage = result.exceptionOrNull()?.message
@@ -154,11 +192,11 @@ private class PostManagementSession(
         }
 
         try {
-            val intent = Intent().apply {
-                component = ComponentName(activity.packageName, BLOCK_ACTIVITY)
-                action = BLOCK_ACTION
+            val managerActivity = Class.forName(BLOCK_ACTIVITY)
+            val intent = Intent(activity, managerActivity).apply {
+                setAction(BLOCK_ACTION)
                 putExtra(EXTRA_GALLERY_ID, galleryId)
-                putExtra(EXTRA_POST_NUMBER, postNo.toString())
+                putExtra(EXTRA_POST_NUMBER, postNo)
             }
             activity.startActivityForResult(intent, BLOCK_REQUEST_CODE)
             transitionTo(Step.BlockStarted)
