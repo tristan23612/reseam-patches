@@ -32,6 +32,9 @@
     <string name="section_user_id">식별코드</string>
     <string name="show_user_id">식별코드 표시</string>
     <string name="enable_user_id_direct_scope">식별코드를 눌러 갤스코프 진입</string>
+    <string name="section_post_management">게시글 관리</string>
+    <string name="post_long_press">게시글 길게 누르기 동작 활성화</string>
+    <string name="post_long_press_summary">게시글을 길게 눌러 차단/삭제 메뉴를 엽니다.</string>
     <string name="page_misc">기타</string>
     <string name="page_misc_summary">부가적인 기능</string>
 </resources>

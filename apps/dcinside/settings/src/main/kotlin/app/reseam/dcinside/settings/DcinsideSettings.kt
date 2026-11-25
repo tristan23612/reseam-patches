@@ -24,4 +24,5 @@ object DcinsideSettings : SettingsGroup(DcinsideStrings) {
     val hidePostBottomLikeView by toggle(default = false)
     val showUserId by toggle(default = false)
     val enableUserIdDirectScope by toggle(default = false)
+    val postLongPress by toggle(default = false)
 }

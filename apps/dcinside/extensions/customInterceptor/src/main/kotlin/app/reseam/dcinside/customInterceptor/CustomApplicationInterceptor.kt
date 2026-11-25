@@ -62,7 +62,8 @@ private class DcinsideInterceptor : Interceptor {
             updateResponseState(json, isListRequest)
 
             val filteredJson = JsonResponseFilters.apply(context, json)
-            copyKey(filteredJson, path, "user_id")
+            if (showUserIdToggleValue?.value == true) copyKey(filteredJson, path, "user_id")
+            if (postLongPressToggleValue?.value == true) copyKey(filteredJson, path, "no")
             responseWithBody(response, filteredJson.toString().toByteArray(charset), contentType)
         } catch (exception: Exception) {
             Log.e(tag, "Failed to process JSON response from $path", exception)
@@ -72,33 +73,44 @@ private class DcinsideInterceptor : Interceptor {
     }
 
     private fun copyKey(response: JSONArray, path: String, key: String) {
-        when {
-            path.contains("gall_list_new") -> {
-                for (index in 0 until response.length()) {
-                    val payload = response.optJSONObject(index) ?: continue
-                    val posts = payload.optJSONArray("gall_list") ?: continue
-                    for (postIndex in 0 until posts.length()) {
-                        posts.optJSONObject(postIndex)?.copyKeyToReseamKey(key)
-                    }
+        when (key) {
+            "no" if path.contains("gall_list_new") -> {
+                copyGallListKey(response, key)
+            }
+            "user_id" -> {
+                when {
+                    path.contains("gall_list_new") -> copyGallListKey(response, key)
+                    path.contains("gall_view_new") -> copyGallViewKey(response, key)
+                    path.contains("comment_new") -> copyCommentKey(response, key)
                 }
             }
+        }
+    }
 
-            path.contains("gall_view_new") -> {
-                for (index in 0 until response.length()) {
-                    response.optJSONObject(index)
-                        ?.optJSONObject("view_info")
-                        ?.copyKeyToReseamKey(key)
-                }
+    private fun copyGallListKey(response: JSONArray, key: String) {
+        for (index in 0 until response.length()) {
+            val payload = response.optJSONObject(index) ?: continue
+            val posts = payload.optJSONArray("gall_list") ?: continue
+            for (postIndex in 0 until posts.length()) {
+                posts.optJSONObject(postIndex)?.copyKeyToReseamKey(key)
             }
+        }
+    }
 
-            path.contains("comment_new") -> {
-                for (index in 0 until response.length()) {
-                    val payload = response.optJSONObject(index) ?: continue
-                    val comments = payload.optJSONArray("comment_list") ?: continue
-                    for (commentIndex in 0 until comments.length()) {
-                        comments.optJSONObject(commentIndex)?.copyKeyToReseamKey(key)
-                    }
-                }
+    private fun copyGallViewKey(response: JSONArray, key: String) {
+        for (index in 0 until response.length()) {
+            response.optJSONObject(index)
+                ?.optJSONObject("view_info")
+                ?.copyKeyToReseamKey(key)
+        }
+    }
+
+    private fun copyCommentKey(response: JSONArray, key: String) {
+        for (index in 0 until response.length()) {
+            val payload = response.optJSONObject(index) ?: continue
+            val comments = payload.optJSONArray("comment_list") ?: continue
+            for (commentIndex in 0 until comments.length()) {
+                comments.optJSONObject(commentIndex)?.copyKeyToReseamKey(key)
             }
         }
     }
