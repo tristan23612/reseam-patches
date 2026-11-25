@@ -188,7 +188,7 @@ private class PostManagementSession(
         try {
             val managerActivity = Class.forName(BLOCK_ACTIVITY)
             val intent = Intent(activity, managerActivity).apply {
-                setAction(BLOCK_ACTION)
+                action = BLOCK_ACTION
                 putExtra(EXTRA_GALLERY_ID, galleryId)
                 putExtra(EXTRA_POST_NUMBER, postNo)
             }
