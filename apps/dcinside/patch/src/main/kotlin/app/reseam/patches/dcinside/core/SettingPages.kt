@@ -9,5 +9,6 @@ internal object DcinsideSettingsPages {
     val Home = SettingsPage("home", DcinsideStrings.pageHome, order = 10, summary = DcinsideStrings.pageHomeSummary, icon = Vector.lucide("house"))
     val General = SettingsPage("general", DcinsideStrings.pageGeneral, order = 20, summary = DcinsideStrings.pageGeneralSummary, icon = Vector.lucide("sliders-horizontal"))
     val Management = SettingsPage("management", DcinsideStrings.pageManagement, order = 30, summary = DcinsideStrings.pageManagementSummary, icon = Vector.lucide("user-round-shield"))
+    val FloatingButton = SettingsPage("floating_button", DcinsideStrings.pageFloatingButton, parent = Management, order = 10, summary = DcinsideStrings.pageFloatingButtonSummary)
     val Misc = SettingsPage("misc", DcinsideStrings.pageMisc, order = 40, summary = DcinsideStrings.pageMiscSummary, icon = Vector.lucide("square-dashed-plus"))
 }

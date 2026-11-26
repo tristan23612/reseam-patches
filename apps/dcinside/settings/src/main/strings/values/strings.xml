@@ -27,7 +27,6 @@
     <string name="hide_post_bottom_like_view_summary">댓글 하단의 게시글 목록이 숨겨집니다.</string>
     <string name="page_management">갤러리 관리</string>
     <string name="page_management_summary">갤러리 관리와 관련된 기능</string>
-    <string name="section_floating_button">플로팅 버튼</string>
     <string name="section_spam">순회</string>
     <string name="section_user_id">식별코드</string>
     <string name="show_user_id">식별코드 표시</string>
@@ -35,6 +34,12 @@
     <string name="section_post_management">게시글 관리</string>
     <string name="post_long_press">게시글 길게 누르기 동작 활성화</string>
     <string name="post_long_press_summary">게시글을 길게 눌러 차단/삭제 메뉴를 엽니다.</string>
+    <string name="page_floating_button">플로팅 버튼</string>
+    <string name="page_floating_button_summary">갤스코프, BanList</string>
+    <string name="section_gall_scope">갤스코프</string>
+    <string name="show_gall_scope">갤스코프 활성화</string>
+    <string name="section_ban_list">BanList</string>
+    <string name="show_ban_list">BanList 활성화</string>
     <string name="page_misc">기타</string>
     <string name="page_misc_summary">부가적인 기능</string>
 </resources>

@@ -22,4 +22,6 @@
     <string name="enable_user_id_direct_scope_description">Adds Reseam Settings to enable userId direct scope</string>
     <string name="post_long_press">Post long press</string>
     <string name="post_long_press_description">Adds Reseam Settings to enable post long press</string>
+    <string name="gall_scope">Gall Scope</string>
+    <string name="gall_scope_description">Adds Reseam Settings to enable gall scope</string>
 </resources>

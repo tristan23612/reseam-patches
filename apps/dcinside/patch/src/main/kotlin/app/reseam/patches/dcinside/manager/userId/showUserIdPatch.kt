@@ -4,6 +4,7 @@ import app.reseam.dcinside.customInterceptor.bindings.CustomApplicationIntercept
 import app.reseam.dcinside.settings.DcinsideSettings
 import app.reseam.dcinside.settings.DcinsideStrings
 import app.reseam.dcinside.showUserId.bindings.ShowUserId
+import app.reseam.dcinside.floatingButton.gallScope.bindings.GallScope
 import app.reseam.patch.*
 import app.reseam.patch.dex.AccessFlags
 import app.reseam.patch.dex.Opcode
@@ -101,6 +102,7 @@ val showUserId = patch(DcinsidePatchStrings.showUserId) {
         appEntry {
             CustomApplicationInterceptor.showUserId(string(DcinsideSettings.showUserId.key), bool(DcinsideSettings.showUserId.default))
             ShowUserId.showUserId(string(DcinsideSettings.showUserId.key), bool(DcinsideSettings.showUserId.default))
+            GallScope.enableUserIdDirectScope(string(DcinsideSettings.enableUserIdDirectScope.key), bool(DcinsideSettings.enableUserIdDirectScope.default))
         }
 
         val postList = getPostList()

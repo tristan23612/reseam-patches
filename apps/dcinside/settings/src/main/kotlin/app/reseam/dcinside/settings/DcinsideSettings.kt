@@ -25,4 +25,5 @@ object DcinsideSettings : SettingsGroup(DcinsideStrings) {
     val showUserId by toggle(default = false)
     val enableUserIdDirectScope by toggle(default = false)
     val postLongPress by toggle(default = false)
+    val showGallScope by toggle(default = false)
 }
