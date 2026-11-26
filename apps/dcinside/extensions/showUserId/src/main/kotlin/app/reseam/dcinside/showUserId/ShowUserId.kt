@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import app.reseam.dcinside.customInterceptor.DcinsideState
+import app.reseam.dcinside.floatingButton.gallScope.showGallScopeDialogWithUserId
 import app.reseam.runtime.Export
 import app.reseam.runtime.ToggleValue
 
@@ -26,10 +27,16 @@ private val MEMO_VIEW_NAMES = arrayOf(
 )
 
 @Volatile private var showUserIdToggleValue: ToggleValue? = null
+@Volatile private var enableUserIdDirectScopeValue: ToggleValue? = null
 
 @Export
 fun showUserId(key: String, defaultValue: Boolean) {
     showUserIdToggleValue = ToggleValue("tristan-patches", key, defaultValue)
+}
+
+@Export
+fun enableUserIdDirectScope(key: String, defaultValue: Boolean) {
+    enableUserIdDirectScopeValue = ToggleValue("tristan-patches", key, defaultValue)
 }
 
 @Export
@@ -54,6 +61,19 @@ fun setUserId(itemView: View?, userId: String?) {
     userIdView.text = " $userId "
     userIdView.setTextColor(findMemoColor(itemView) ?: DEFAULT_USER_ID_COLOR)
     userIdView.visibility = View.VISIBLE
+    if (enableUserIdDirectScopeValue?.value == true) {
+        val galleryData = galleryDataView?.tag as? Map<*, *>
+        val boundGalleryId = galleryData?.get("gallery_id") as? String ?: DcinsideState.galleryId.orEmpty()
+        val boundGalleryType = galleryData?.get("gallery_type") as? String ?: DcinsideState.galleryType.orEmpty()
+        userIdView.setOnClickListener { view ->
+            showGallScopeDialogWithUserId(
+                view.context,
+                userId,
+                boundGalleryType,
+                boundGalleryId,
+            )
+        }
+    }
     userIdView.setOnLongClickListener { view ->
         copyUserId(view.context, userId)
         true

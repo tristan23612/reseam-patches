@@ -18,7 +18,6 @@ import java.util.WeakHashMap
 private const val GALL_SCOPE_BUTTON_ID = "reseam_gall_scope_button"
 
 @Volatile private var showGallScopeValue: ToggleValue? = null
-@Volatile private var enableUserIdDirectScopeValue: ToggleValue? = null
 
 @Export
 fun showGallScope(key: String, defaultValue: Boolean) {
@@ -26,11 +25,6 @@ fun showGallScope(key: String, defaultValue: Boolean) {
     FloatingButtonRegistry.register("gall_scope") { rootView, visible ->
         setGallScopeButtonVisibility(rootView, visible, GALL_SCOPE_BUTTON_ID)
     }
-}
-
-@Export
-fun enableUserIdDirectScope(key: String, defaultValue: Boolean) {
-    enableUserIdDirectScopeValue = ToggleValue("tristan-patches", key, defaultValue)
 }
 
 @SuppressLint("DiscouragedApi")
@@ -57,7 +51,7 @@ fun showGallScopeDialogWithUserId(
     prefillGalleryType: String?,
     prefillGalleryId: String?,
 ) {
-    if (enableUserIdDirectScopeValue?.value != true || context == null) return
+    if (context == null) return
     GallScopeController.openOrResume(context, prefillUserId, prefillGalleryType, prefillGalleryId)
 }
 

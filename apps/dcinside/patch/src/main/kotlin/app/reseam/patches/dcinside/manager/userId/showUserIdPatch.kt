@@ -4,7 +4,6 @@ import app.reseam.dcinside.customInterceptor.bindings.CustomApplicationIntercept
 import app.reseam.dcinside.settings.DcinsideSettings
 import app.reseam.dcinside.settings.DcinsideStrings
 import app.reseam.dcinside.showUserId.bindings.ShowUserId
-import app.reseam.dcinside.floatingButton.gallScope.bindings.GallScope
 import app.reseam.patch.*
 import app.reseam.patch.dex.AccessFlags
 import app.reseam.patch.dex.Opcode
@@ -21,6 +20,7 @@ import app.reseam.patches.dcinside.core.DCINSIDE
 import app.reseam.patches.dcinside.core.DcinsideSettingsPages
 import app.reseam.patches.dcinside.core.dcinsideSettings
 import app.reseam.patches.dcinside.customInterceptor.customInterceptor
+import app.reseam.patches.dcinside.manager.floatingButton.gallScope
 
 internal const val POST_ITEM_CLASS = "com.dcinside.app.response.PostItem"
 internal const val POST_INFO_CLASS = "com.dcinside.app.model.PostInfo"
@@ -29,7 +29,7 @@ internal const val POST_INFO_CLASS = "com.dcinside.app.model.PostInfo"
 val showUserId = patch(DcinsidePatchStrings.showUserId) {
     description(DcinsidePatchStrings.showUserIdDescription)
     compatibleWith(DCINSIDE)
-    dependsOn(customInterceptor)
+    dependsOn(customInterceptor, gallScope)
     settings(
         dcinsideSettings,
         section(
@@ -102,7 +102,7 @@ val showUserId = patch(DcinsidePatchStrings.showUserId) {
         appEntry {
             CustomApplicationInterceptor.showUserId(string(DcinsideSettings.showUserId.key), bool(DcinsideSettings.showUserId.default))
             ShowUserId.showUserId(string(DcinsideSettings.showUserId.key), bool(DcinsideSettings.showUserId.default))
-            GallScope.enableUserIdDirectScope(string(DcinsideSettings.enableUserIdDirectScope.key), bool(DcinsideSettings.enableUserIdDirectScope.default))
+            ShowUserId.enableUserIdDirectScope(string(DcinsideSettings.enableUserIdDirectScope.key), bool(DcinsideSettings.enableUserIdDirectScope.default))
         }
 
         val postList = getPostList()
