@@ -348,7 +348,8 @@ internal class GallScopeSession(
 
     private fun copyResults(snapshot: List<GallScopeResult>) {
         val text = buildString {
-            append("$targetUserId ${mode?.label} 검색 결과 (${snapshot.size}건)\n\n")
+            append("$targetUserId ${mode?.label} 검색 결과 (${snapshot.size}건)\n")
+            append("검색 페이지: ${firstPage}~${lastPage}페이지\n\n")
             snapshot.forEach { append(it.title).append('\n').append(it.date).append('\n').append(it.url).append("\n\n") }
         }
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
