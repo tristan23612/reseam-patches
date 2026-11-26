@@ -105,13 +105,13 @@ internal class GallScopeSearch {
             if (page != null) {
                 val call = client.newCall(buildRequest(buildListUrl(galleryType, galleryId, page, comments = false)))
                 call.enqueue(object : Callback {
-                    override fun onFailure(call: Call, error: IOException) = completePage()
+                    override fun onFailure(call: Call, e: IOException) = completePage()
 
                     override fun onResponse(call: Call, response: Response) {
                         try {
                             response.use {
                                 if (!it.isSuccessful) return@use
-                                val body = it.body ?: return@use
+                                val body = it.body
                                 val document = HtmlDocument.parse(body.string())
                                 val actualPage = document.selectFirst("div.bottom_paging_box em")?.text()?.toIntOrNull()
                                 if (actualPage != null && actualPage != page) {
@@ -216,7 +216,7 @@ internal class GallScopeSearch {
     private fun fetch(url: HttpUrl): HtmlResponse {
         client.newCall(buildRequest(url)).execute().use { response ->
             if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
-            val body = response.body ?: throw IOException("검색 응답이 비어 있습니다.")
+            val body = response.body
             return HtmlResponse(HtmlDocument.parse(body.string()), response.request.url.toString())
         }
     }

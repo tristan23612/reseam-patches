@@ -69,6 +69,10 @@ internal class GallScopeSession(
     }
 
     private fun show() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            mainHandler.post { show() }
+            return
+        }
         if (closed) return
         if (context is Activity && (context.isFinishing || context.isDestroyed)) {
             finish()
@@ -76,8 +80,21 @@ internal class GallScopeSession(
         }
         minimized = false
         val version = ++renderVersion
-        dialog?.dismiss()
+        val previousDialog = dialog
+        dialog = null
         progressView = null
+        if (previousDialog?.isShowing == true) {
+            previousDialog.dismiss()
+            mainHandler.post {
+                if (!closed && version == renderVersion) renderDialog(version)
+            }
+            return
+        }
+        renderDialog(version)
+    }
+
+    private fun renderDialog(version: Long) {
+        if (closed || version != renderVersion) return
         val ui = ManagementDialogUi.create(context)
         val builder = buildDialog(ui)
             .onDismiss {
@@ -243,16 +260,6 @@ internal class GallScopeSession(
                         endPage = startPage + rangeSize - 1
                     }
                     startSearch(append = true)
-                }
-                action("새 검색") {
-                    results.clear()
-                    firstPage = 1
-                    lastPage = 0
-                    rangeExceeded = false
-                    search.resetComments()
-                    mode = null
-                    step = Step.IDENTIFIER
-                    show()
                 }
             }
             .dismissAction("닫기")
