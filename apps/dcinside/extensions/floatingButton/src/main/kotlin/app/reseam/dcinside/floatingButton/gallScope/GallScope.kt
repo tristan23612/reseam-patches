@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.view.View
+import android.view.ViewGroup
 import app.reseam.dcinside.floatingButton.FloatingButtonRegistry
 import app.reseam.dcinside.management.ui.ManagementDialogUi
 import app.reseam.runtime.Export
@@ -67,16 +68,21 @@ internal object GallScopeController {
     }
 
     fun bindButton(button: View) {
+        val backgroundView = (button as? ViewGroup)?.let { group ->
+            (0 until group.childCount).asSequence()
+                .map(group::getChildAt)
+                .firstOrNull { it !is android.widget.ImageView }
+        } ?: button
         synchronized(buttons) {
-            if (!buttons.containsKey(button)) buttons[button] = button.backgroundTintList
+            if (!buttons.containsKey(backgroundView)) buttons[backgroundView] = backgroundView.backgroundTintList
         }
-        button.post { applyColor(button) }
+        backgroundView.post { applyColor(backgroundView) }
     }
 
     fun searchingChanged(value: Boolean) {
         searching = value
         val snapshot = synchronized(buttons) { buttons.keys.toList() }
-        snapshot.forEach { button -> button.post { applyColor(button) } }
+        snapshot.forEach { backgroundView -> backgroundView.post { applyColor(backgroundView) } }
     }
 
     private fun applyColor(button: View) {
