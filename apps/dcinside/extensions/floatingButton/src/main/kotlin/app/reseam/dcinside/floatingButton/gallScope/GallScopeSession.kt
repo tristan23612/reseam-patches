@@ -150,7 +150,7 @@ internal class GallScopeSession(
 
     private fun modeDialog(ui: Ui): BrandDialog.Builder = ui.dialog()
         .title("갤스코프")
-        .message("$targetUserId · ${galleryLabel()}")
+        .message(targetUserId)
         .choices(arrayOf("게시글 검색", "댓글 검색"), -1) { choice ->
             mode = if (choice == 0) Mode.POSTS else Mode.COMMENTS
             if (choice == 1) search.resetComments()
@@ -189,7 +189,7 @@ internal class GallScopeSession(
 
         return ui.dialog()
             .title("${selectedMode.label} 검색")
-            .message("$targetUserId · ${galleryLabel()}")
+            .message(targetUserId)
             .view(content)
             .action("검색 시작") {
                 val parsedEnd = endField.text.trim().toIntOrNull()
@@ -330,12 +330,6 @@ internal class GallScopeSession(
     }
 
     private fun isDialogShowing() = !minimized && dialog?.isShowing == true
-
-    private fun galleryLabel() = when (galleryType) {
-        "mgallery" -> "미니갤러리"
-        "mini" -> "인물갤러리"
-        else -> "갤러리"
-    }
 
     private fun openResult(item: GallScopeResult) {
         val number = item.postNo.toIntOrNull() ?: return
