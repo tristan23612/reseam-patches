@@ -4,11 +4,8 @@ package app.reseam.dcinside.floatingButton.gallScope
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.content.res.ColorStateList
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
 import app.reseam.dcinside.floatingButton.FloatingButtonRegistry
 import app.reseam.dcinside.management.ui.ManagementDialogUi
 import app.reseam.runtime.Export
@@ -33,10 +30,7 @@ private fun setGallScopeButtonVisibility(targetView: View, visible: Boolean, but
     val id = root.resources.getIdentifier(buttonIdName, "id", root.context.packageName)
     if (id == 0) return false
     val button = root.findViewById<View>(id) ?: return false
-    val icon = (button as? ViewGroup)?.let { group ->
-        (0 until group.childCount).asSequence().map { group.getChildAt(it) }.filterIsInstance<ImageView>().firstOrNull()
-    }
-    if (icon != null) GallScopeController.bindIcon(icon)
+    GallScopeController.bindButton(button)
     button.setOnClickListener { GallScopeController.openOrResume(button.context) }
 
     val shouldShow = visible && showGallScopeValue?.value == true
@@ -58,7 +52,7 @@ fun showGallScopeDialogWithUserId(
 internal object GallScopeController {
     @Volatile private var activeSession: GallScopeSession? = null
     @Volatile private var searching = false
-    private val icons = WeakHashMap<ImageView, Unit>()
+    private val buttons = WeakHashMap<View, ColorStateList?>()
 
     fun openOrResume(context: Context, userId: String? = null, galleryType: String? = null, galleryId: String? = null) {
         val session = synchronized(this) {
@@ -72,25 +66,24 @@ internal object GallScopeController {
         if (session === activeSession && session.isStarted()) session.resume() else session.start()
     }
 
-    fun bindIcon(icon: ImageView) {
-        synchronized(icons) { icons[icon] = Unit }
-        icon.post { applyColor(icon) }
+    fun bindButton(button: View) {
+        synchronized(buttons) {
+            if (!buttons.containsKey(button)) buttons[button] = button.backgroundTintList
+        }
+        button.post { applyColor(button) }
     }
 
     fun searchingChanged(value: Boolean) {
         searching = value
-        val snapshot = synchronized(icons) { icons.keys.toList() }
-        snapshot.forEach { icon -> icon.post { applyColor(icon) } }
+        val snapshot = synchronized(buttons) { buttons.keys.toList() }
+        snapshot.forEach { button -> button.post { applyColor(button) } }
     }
 
-    private fun applyColor(icon: ImageView) {
-        if (!searching) {
-            icon.clearColorFilter()
-            return
-        }
-        val color = runCatching {
-            ManagementDialogUi.create(icon.context).colors.primary
-        }.getOrNull() ?: return
-        icon.colorFilter = PorterDuffColorFilter(color, PorterDuff.Mode.SRC_IN)
+    private fun applyColor(button: View) {
+        val originalTint = synchronized(buttons) { buttons[button] }
+        val searchTint = if (searching) runCatching {
+            ColorStateList.valueOf(ManagementDialogUi.create(button.context).colors.primary)
+        }.getOrNull() else null
+        button.backgroundTintList = searchTint ?: originalTint
     }
 }
