@@ -66,7 +66,7 @@ internal class GallScopeSearch {
         userId: String,
         startPage: Int,
         endPage: Int,
-        onProgress: (Int, Int) -> Unit,
+        onProgress: (Int, Int, Int) -> Unit,
     ): SearchBatch {
         val results = Collections.synchronizedList(mutableListOf<GallScopeResult>())
         val totalPages = endPage - startPage + 1
@@ -90,7 +90,7 @@ internal class GallScopeSearch {
         fun completePage() {
             val done = completedPages.incrementAndGet()
             activeRequests.decrementAndGet()
-            onProgress(done, totalPages)
+            onProgress(done, totalPages, results.size)
             if (!rangeExceeded.get() && nextPage.get() <= endPage) {
                 postScheduler.schedule({ launchNextPage() }, 500, TimeUnit.MILLISECONDS)
             }
@@ -154,7 +154,7 @@ internal class GallScopeSearch {
         galleryId: String,
         userId: String,
         pageLimit: Int,
-        onProgress: (Int, Int) -> Unit,
+        onProgress: (Int, Int, Int) -> Unit,
     ): SearchBatch {
         val results = mutableListOf<GallScopeResult>()
         val startingCount = commentAccumulatedPageCount
@@ -182,7 +182,7 @@ internal class GallScopeSearch {
                 commentSearchPos = nextSearchPos
                 commentRequestPage = 1
                 commentAccumulatedPageCount++
-                onProgress(commentAccumulatedPageCount - startingCount, pageLimit)
+                onProgress(commentAccumulatedPageCount - startingCount, pageLimit, results.size)
                 Thread.sleep(500)
                 continue
             }
@@ -197,7 +197,7 @@ internal class GallScopeSearch {
             previousCommentDocument = document
             commentRequestPage++
             commentAccumulatedPageCount++
-            onProgress(commentAccumulatedPageCount - startingCount, pageLimit)
+            onProgress(commentAccumulatedPageCount - startingCount, pageLimit, results.size)
             if (commentAccumulatedPageCount < targetCount) Thread.sleep(100)
         }
 

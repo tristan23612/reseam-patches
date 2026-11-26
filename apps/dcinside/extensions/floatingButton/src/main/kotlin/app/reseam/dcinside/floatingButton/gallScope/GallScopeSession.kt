@@ -46,6 +46,9 @@ internal class GallScopeSession(
     private var lastPage = 0
     private var rangeExceeded = false
     private var progressView: TextView? = null
+    private var progressDone = 0
+    private var progressTotal = 0
+    private var progressResultCount = 0
     private var dialog: Dialog? = null
     private var renderVersion = 0L
     private var minimized = false
@@ -214,7 +217,7 @@ internal class GallScopeSession(
             addView(ProgressBar(context), LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
                 gravity = Gravity.CENTER_HORIZONTAL
             })
-            progressView = ui.text(progressText(0, rangeSize), ui.type.bodyMedium, ui.colors.onSurface).apply {
+            progressView = ui.text(progressText(), ui.type.bodyMedium, ui.colors.onSurface).apply {
                 gravity = Gravity.CENTER
                 setPadding(0, dp(12), 0, 0)
             }
@@ -277,6 +280,9 @@ internal class GallScopeSession(
     private fun startSearch(append: Boolean = false) {
         val selectedMode = mode ?: return
         if (!append) results.clear()
+        progressDone = 0
+        progressTotal = rangeSize
+        progressResultCount = results.size
         step = Step.SEARCHING
         searching = true
         GallScopeController.searchingChanged(true)
@@ -295,6 +301,7 @@ internal class GallScopeSession(
                     searching = false
                     GallScopeController.searchingChanged(false)
                     results += batch.results
+                    progressResultCount = results.size
                     lastPage = max(lastPage, batch.lastPage)
                     rangeExceeded = batch.rangeExceeded
                     step = Step.RESULTS
@@ -312,13 +319,16 @@ internal class GallScopeSession(
         }
     }
 
-    private fun onProgress(done: Int, total: Int) {
+    private fun onProgress(done: Int, total: Int, foundInBatch: Int) {
         mainHandler.post {
-            progressView?.text = progressText(done, total)
+            progressDone = max(progressDone, done)
+            progressTotal = total
+            progressResultCount = max(progressResultCount, results.size + foundInBatch)
+            progressView?.text = progressText()
         }
     }
 
-    private fun progressText(done: Int, total: Int) = "검색한 페이지 $done / $total\n결과 ${results.size}건"
+    private fun progressText() = "검색한 페이지 $progressDone / $progressTotal\n결과 ${progressResultCount}건"
     private fun dp(value: Int): Int = (value * context.resources.displayMetrics.density + 0.5f).toInt()
 
     private fun minimize() {
