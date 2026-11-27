@@ -62,20 +62,20 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
         Step.IDENTIFIER_RESULT -> identifierResultsDialog(ui)
         Step.IDENTIFIER_ERROR -> ui.dialog().title("식별코드 조회")
             .message("$identifierErrorMessage\n${galleryDescription()}")
-            .action("재시도") { transitionTo(Step.IDENTIFIER_FETCHING) }
             .dismissAction("닫기")
+            .action("재시도") { transitionTo(Step.IDENTIFIER_FETCHING) }
         Step.FETCHING_LATEST_DATA -> ui.dialog().title("차단 내역")
             .message("이전 업로드 기록을 확인하고 있습니다.\n${galleryDescription()}")
         Step.INITIAL_INGEST_CONFIRMATION -> ui.dialog().title("차단 내역")
             .message("DB에 기존 기록이 없습니다. 차단 목록 전체를 수집해 업로드하시겠습니까?\n${galleryDescription()}")
-            .action("수집") { transitionTo(Step.PARSING) }
             .dismissAction("취소")
+            .action("수집") { transitionTo(Step.PARSING) }
         Step.PARSING -> ui.dialog().title("차단 내역")
             .message("디시인사이드 차단 목록을 수집하고 있습니다.\n${galleryDescription()}")
         Step.INGEST_CONFIRMATION -> ui.dialog().title("차단 내역")
             .message("${banList.length()}건의 신규 차단 내역을 업로드하시겠습니까?\n${galleryDescription()}")
-            .action("업로드") { transitionTo(Step.INGEST_IN_PROGRESS) }
             .dismissAction("취소")
+            .action("업로드") { transitionTo(Step.INGEST_IN_PROGRESS) }
         Step.INGEST_IN_PROGRESS -> ui.dialog().title("차단 내역")
             .message("Worker로 데이터를 전송하고 있습니다.\n${galleryDescription()}")
         Step.INGEST_COMPLETE -> ui.dialog().title("차단 내역")
@@ -86,8 +86,8 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
             .dismissAction("확인")
         Step.ERROR -> ui.dialog().title("차단 내역")
             .message("$errorMessage\n${galleryDescription()}")
-            .action("재시도") { transitionTo(actionStep()) }
             .dismissAction("취소")
+            .action("재시도") { transitionTo(actionStep()) }
     }
 
     override fun onStepShown(step: Step) {
@@ -124,6 +124,9 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
             .title("Worker 설정")
             .message("연동할 Cloudflare Worker 정보를 입력하세요.")
             .view(content)
+            .action("취소") {
+                workerSettingsReturnStep?.let(::transitionTo) ?: dismiss()
+            }
             .action("저장") {
                 val newUrl = url.text.trim()
                 val newViewToken = viewToken.text.trim()
@@ -140,9 +143,6 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
                 if (BanListSettings.banListIdentifierSearchEnabled) BanListSettings.banListWorkerViewTokenValue = newViewToken
                 if (BanListSettings.banListIngestEnabled) BanListSettings.banListWorkerIngestTokenValue = newIngestToken
                 transitionTo(workerSettingsReturnStep ?: nextAfterInitialWorkerSettings())
-            }
-            .action("취소") {
-                workerSettingsReturnStep?.let(::transitionTo) ?: dismiss()
             }
     }
 
@@ -172,6 +172,7 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
             .title("DCInside 설정")
             .message("PC 차단 목록을 수집할 계정과 갤러리 경로를 입력하세요.\n예: [{\"id\":\"onshinproject\",\"path\":\"mgallery\"}]")
             .view(content)
+            .dismissAction("취소")
             .action("저장") {
                 val newGalleries = galleries.text.trim()
                 val newUserId = userId.text.trim()
@@ -193,7 +194,6 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
                 BanListSettings.dcinsidePasswordValue = newPassword
                 transitionTo(actionStep())
             }
-            .dismissAction("취소")
     }
 
     private fun actionSelectionDialog(ui: Ui): BrandDialog.Builder {
@@ -211,11 +211,11 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
                     transitionTo(Step.FETCHING_LATEST_DATA)
                 }
             }
+            .dismissAction("취소")
             .action("Worker 설정") {
                 workerSettingsReturnStep = Step.ACTION_SELECTION
                 transitionTo(Step.WORKER_SETTINGS)
             }
-            .dismissAction("취소")
     }
 
     private fun identifierInputDialog(ui: Ui): BrandDialog.Builder {
@@ -228,6 +228,11 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
             .title("식별코드 조회")
             .message("DB에서 정확히 일치하는 식별코드를 찾습니다.\n${galleryDescription()}")
             .view(ManagementDialogUi.column(context, field))
+            .dismissAction("취소")
+            .action("Worker 설정") {
+                workerSettingsReturnStep = Step.IDENTIFIER_INPUT
+                transitionTo(Step.WORKER_SETTINGS)
+            }
             .action("조회") {
                 identifier = normalizeIdentifier(field.text)
                 if (identifier.isEmpty()) {
@@ -237,11 +242,6 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
                 }
                 transitionTo(Step.IDENTIFIER_FETCHING)
             }
-            .action("Worker 설정") {
-                workerSettingsReturnStep = Step.IDENTIFIER_INPUT
-                transitionTo(Step.WORKER_SETTINGS)
-            }
-            .dismissAction("취소")
     }
 
     private fun identifierResultsDialog(ui: Ui): BrandDialog.Builder {
@@ -271,8 +271,8 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
             .title("식별코드 조회")
             .message(galleryDescription())
             .view(content)
-            .action("복사") { copyIdentifierResults(snapshot) }
             .dismissAction("닫기")
+            .action("복사") { copyIdentifierResults(snapshot) }
     }
 
     private fun fetchIdentifierResults() {
