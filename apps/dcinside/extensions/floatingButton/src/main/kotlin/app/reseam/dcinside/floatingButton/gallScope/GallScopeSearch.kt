@@ -1,8 +1,6 @@
 package app.reseam.dcinside.floatingButton.gallScope
 
 import android.net.Uri
-import app.reseam.shared.html.HtmlDocument
-import app.reseam.shared.html.HtmlElement
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -16,6 +14,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 
 internal data class GallScopeResult(
     val type: Type,
@@ -50,7 +51,7 @@ internal class GallScopeSearch {
     private var commentRequestPage = 1
     private var commentAccumulatedPageCount = 0
     private var commentSearchPos = ""
-    private var previousCommentDocument: HtmlDocument? = null
+    private var previousCommentDocument: Document? = null
 
     fun resetComments() {
         commentRequestPage = 1
@@ -112,7 +113,7 @@ internal class GallScopeSearch {
                             response.use {
                                 if (!it.isSuccessful) return@use
                                 val body = it.body
-                                val document = HtmlDocument.parse(body.string())
+                                val document = Jsoup.parse(body.string())
                                 val actualPage = document.selectFirst("div.bottom_paging_box em")?.text()?.toIntOrNull()
                                 if (actualPage != null && actualPage != page) {
                                     rangeExceeded.set(true)
@@ -204,7 +205,7 @@ internal class GallScopeSearch {
         return SearchBatch(results, commentAccumulatedPageCount, exceeded)
     }
 
-    private data class HtmlResponse(val document: HtmlDocument, val url: String)
+    private data class HtmlResponse(val document: Document, val url: String)
 
     private fun buildRequest(url: HttpUrl): Request = Request.Builder()
         .url(url)
@@ -217,7 +218,7 @@ internal class GallScopeSearch {
         client.newCall(buildRequest(url)).execute().use { response ->
             if (!response.isSuccessful) throw IOException("HTTP ${response.code}")
             val body = response.body
-            return HtmlResponse(HtmlDocument.parse(body.string()), response.request.url.toString())
+            return HtmlResponse(Jsoup.parse(body.string()), response.request.url.toString())
         }
     }
     private fun buildListUrl(
@@ -242,7 +243,7 @@ internal class GallScopeSearch {
         return builder.build()
     }
 
-    private fun parsePosts(document: HtmlDocument, targetUserId: String): List<GallScopeResult> =
+    private fun parsePosts(document: Document, targetUserId: String): List<GallScopeResult> =
         document.select("tr.ub-content.us-post").mapNotNull { row ->
             val writer = row.selectFirst("td.gall_writer") ?: return@mapNotNull null
             val userId = writer.attr("data-uid").trim()
@@ -263,7 +264,7 @@ internal class GallScopeSearch {
             )
         }
 
-    private fun parseComments(document: HtmlDocument, targetUserId: String): List<GallScopeResult> =
+    private fun parseComments(document: Document, targetUserId: String): List<GallScopeResult> =
         document.select(".listwrap2 .search.search_comment").mapNotNull { row ->
             val writer = row.selectFirst("td.gall_writer, .gall_writer") ?: return@mapNotNull null
             val userId = writer.attr("data-uid").trim()
@@ -284,12 +285,12 @@ internal class GallScopeSearch {
             )
         }
 
-    private fun extractNextSearchPosition(document: HtmlDocument?): String? {
+    private fun extractNextSearchPosition(document: Document?): String? {
         val href = document?.selectFirst("div.bottom_paging_wrap a.search_next")?.attr("href") ?: return null
         return Regex("[?&]search_pos=(\\d+)").find(href)?.groupValues?.get(1)
     }
 
-    private fun HtmlElement.textOf(selector: String): String = selectFirst(selector)?.text().orEmpty()
+    private fun Element.textOf(selector: String): String = selectFirst(selector)?.text().orEmpty()
 
     private fun absoluteUrl(href: String): String = when {
         href.isEmpty() -> ""

@@ -1,6 +1,5 @@
 package app.reseam.dcinside.floatingButton.banList
 
-import app.reseam.shared.html.HtmlDocument
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.FormBody
@@ -12,6 +11,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -163,7 +164,7 @@ internal object BanListApi {
         val ciToken = inputValue(loginHtml, "ci_t")
             ?: throw IOException("로그인 페이지에서 ci_t 값을 찾지 못했습니다.")
 
-        val form = FormBody.Builder()
+        val form = FormBody.Builder(Charsets.UTF_8)
             .add("ci_t", ciToken)
             .add("s_url", REDIRECT_URL)
             .add("tieup", "")
@@ -187,7 +188,7 @@ internal object BanListApi {
         return AuthenticatedSession(client)
     }
 
-    private fun fetchPage(session: AuthenticatedSession, path: String, galleryId: String, page: Int): HtmlDocument {
+    private fun fetchPage(session: AuthenticatedSession, path: String, galleryId: String, page: Int): Document {
         val url = HttpUrl.Builder()
             .scheme("https")
             .host("gall.dcinside.com")
@@ -204,7 +205,7 @@ internal object BanListApi {
             .header("User-Agent", USER_AGENT)
             .get().build(), "차단 목록 ${page}페이지 요청")
         if (html.length > MAX_PAGE_LENGTH) throw IOException("차단 목록 ${page}페이지 응답이 너무 큽니다.")
-        val document = HtmlDocument.parse(html)
+        val document = Jsoup.parse(html)
         if (!BanListHtmlParser.hasRows(document)) {
             if (inputTag(html, "user_id") != null || html.contains("sign.dcinside.com/login", ignoreCase = true)) {
                 throw IOException("DCInside 로그인 세션이 유지되지 않았습니다.")

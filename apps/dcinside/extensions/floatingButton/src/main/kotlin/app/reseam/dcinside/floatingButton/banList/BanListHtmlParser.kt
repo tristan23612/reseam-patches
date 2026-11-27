@@ -1,22 +1,22 @@
 package app.reseam.dcinside.floatingButton.banList
 
-import app.reseam.shared.html.HtmlDocument
-import app.reseam.shared.html.HtmlElement
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 
 internal object BanListHtmlParser {
     private val pageParameter = Regex("[?&]p=(\\d+)(?:&|$)")
 
-    fun hasRows(document: HtmlDocument) = document.select("tbody tr .blocknik").isNotEmpty()
+    fun hasRows(document: Document) = document.select("tbody tr .blocknik").isNotEmpty()
 
-    fun parsePage(document: HtmlDocument): List<JSONObject> =
+    fun parsePage(document: Document): List<JSONObject> =
         document.select("tbody tr")
             .filter { it.selectFirst(".blocknik") != null }
             .map(::parseRow)
 
-    fun extractLastPage(document: HtmlDocument, currentPage: Int): Int {
+    fun extractLastPage(document: Document, currentPage: Int): Int {
         val lastPageHref = document.selectFirst(".bottom_paging_box a.page_end")?.attr("href")
         lastPageHref?.let(::pageFromHref)?.takeIf { it > 0 }?.let { return maxOf(currentPage, it) }
         return document.select(".bottom_paging_box a[href]")
@@ -27,7 +27,7 @@ internal object BanListHtmlParser {
     }
 
     @Throws(JSONException::class)
-    private fun parseRow(row: HtmlElement): JSONObject {
+    private fun parseRow(row: Element): JSONObject {
         val nicknameCell = row.selectFirst(".blocknik")
         var nickname = ""
         var identifierText = ""
