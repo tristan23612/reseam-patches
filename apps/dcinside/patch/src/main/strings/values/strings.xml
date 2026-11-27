@@ -24,4 +24,6 @@
     <string name="post_long_press_description">Adds Reseam Settings to enable post long press</string>
     <string name="gall_scope">Gall Scope</string>
     <string name="gall_scope_description">Adds Reseam Settings to enable gall scope</string>
+    <string name="ban_list">Ban List</string>
+    <string name="ban_list_description">Adds Reseam Settings to enable ban list</string>
 </resources>

@@ -36,10 +36,22 @@
     <string name="post_long_press_summary">게시글을 길게 눌러 차단/삭제 메뉴를 엽니다.</string>
     <string name="page_floating_button">플로팅 버튼</string>
     <string name="page_floating_button_summary">갤스코프, BanList</string>
-    <string name="section_gall_scope">갤스코프</string>
-    <string name="show_gall_scope">갤스코프 활성화</string>
-    <string name="section_ban_list">BanList</string>
-    <string name="show_ban_list">BanList 활성화</string>
+    <string name="page_gall_scope">갤스코프</string>
+    <string name="section_gall_scope_button">갤스코프 버튼</string>
+    <string name="show_gall_scope">갤스코프 버튼 보이기</string>
+    <string name="page_ban_list">BanList</string>
+    <string name="section_ban_list_button">BanList 버튼</string>
+    <string name="show_ban_list">BanList 버튼 보이기</string>
+    <string name="ban_list_worker_url">BanList Worker Url</string>
+    <string name="section_ban_list_search">BanList 조회</string>
+    <string name="enable_ban_list_identifier_search">BanList 식별코드 검색 활성화</string>
+    <string name="ban_list_worker_view_token">BanList Worker View Token</string>
+    <string name="section_ban_list_ingest">BanList Ingest</string>
+    <string name="enable_ban_list_ingest">BanList Ingest 활성화</string>
+    <string name="ban_list_worker_ingest_token">BanList Worker Ingest Token</string>
+    <string name="galleries_json">Galleries.json</string>
+    <string name="dcinside_user_id">Dcinside 계정 ID</string>
+    <string name="dcinside_password">Dcinside 계정 PW</string>
     <string name="page_misc">기타</string>
     <string name="page_misc_summary">부가적인 기능</string>
 </resources>

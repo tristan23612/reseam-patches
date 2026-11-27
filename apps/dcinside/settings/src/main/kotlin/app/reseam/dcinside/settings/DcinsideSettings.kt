@@ -26,4 +26,13 @@ object DcinsideSettings : SettingsGroup(DcinsideStrings) {
     val enableUserIdDirectScope by toggle(default = false)
     val postLongPress by toggle(default = false)
     val showGallScope by toggle(default = false)
+    val showBanList by toggle(default = false)
+    val banListWorkerUrl by text(default = "")
+    val enableBanListIdentifierSearch by toggle(default = false)
+    val enableBanListIngest by toggle(default = false)
+    val banListWorkerViewToken by text(default = "")
+    val banListWorkerIngestToken by text(default = "")
+    val galleriesJson by folder(default = "")
+    val dcinsideUserId by text(default = "")
+    val dcinsidePassword by text(default = "")
 }

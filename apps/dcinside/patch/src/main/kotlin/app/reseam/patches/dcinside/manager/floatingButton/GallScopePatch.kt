@@ -18,8 +18,8 @@ val gallScope = patch(DcinsidePatchStrings.gallScope) {
     settings(
         dcinsideSettings,
         section(
-            DcinsideSettingsPages.FloatingButton,
-            DcinsideStrings.sectionGallScope,
+            DcinsideSettingsPages.GallScope,
+            DcinsideStrings.sectionGallScopeButton,
             DcinsideSettings.showGallScope,
         )
     )
