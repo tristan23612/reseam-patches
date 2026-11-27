@@ -1,10 +1,14 @@
 {
   "name": "tristan-patches",
-  "version": "0.0.0",
-  "reseam": { "engine": "1.0.0" },
+  "version": "1.0.0-dev.1",
+  "reseam": {
+    "engine": "1.0.1"
+  },
   "private": true,
   "license": "AGPL-3.0-or-later",
-  "scripts": { "release": "semantic-release" },
+  "scripts": {
+    "release": "semantic-release"
+  },
   "devDependencies": {
     "@saithodev/semantic-release-backmerge": "latest",
     "@semantic-release/changelog": "latest",

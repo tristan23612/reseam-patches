@@ -1,0 +1,1 @@
+reseamStrings { objectName = "app.reseam.dcinside.settings.DcinsideStrings" }
