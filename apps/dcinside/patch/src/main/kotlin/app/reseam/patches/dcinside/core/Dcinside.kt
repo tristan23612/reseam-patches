@@ -5,7 +5,7 @@ import app.reseam.patch.*
 
 const val DCINSIDE_PACKAGE = "com.dcinside.app.android"
 
-val DCINSIDE: CompatiblePackage = DCINSIDE_PACKAGE("5.3.25")
+val DCINSIDE: CompatiblePackage = DCINSIDE_PACKAGE("5.3.30")
 
 val mainActivityOnCreate = klass(DCINSIDE_PACKAGE).method("onCreate") {
     params("android.os.Bundle")
