@@ -5,6 +5,7 @@ package app.reseam.patches.universal
 
 import app.reseam.patch.patch
 
+@Suppress("unused")
 val enableDebugging = patch(UniversalPatchStrings.enableDebugging) {
     description(UniversalPatchStrings.enableDebuggingDescription)
 
