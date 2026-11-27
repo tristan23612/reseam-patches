@@ -6,7 +6,7 @@
 
 <p align="center">A <a href="https://reseam.app">Reseam</a> patch made by Tristan</p>
 <p align="center">
-  <a href="[https://reseam.app/add/?url=https://github.com/tristan23612/reseam-patches](https://reseam.app/add/?url=https%3A%2F%2Fgithub.com%2Ftristan23612%2Freseam-patches)"><img src="./.github/assets/add-to-reseam.svg" alt="Add to Reseam" height="48"></a>
+  <a href="https://reseam.app/add/?url=https%3A%2F%2Fgithub.com%2Ftristan23612%2Freseam-patches"><img src="./.github/assets/add-to-reseam.svg" alt="Add to Reseam" height="48"></a>
 </p>
 
 ## Patches
