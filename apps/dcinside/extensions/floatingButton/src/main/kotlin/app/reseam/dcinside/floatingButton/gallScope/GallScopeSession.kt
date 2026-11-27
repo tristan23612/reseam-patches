@@ -131,7 +131,7 @@ internal class GallScopeSession(
         }
         return ui.dialog()
             .title("갤스코프")
-            .message("검색할 유저의 식별코드를 입력하세요.")
+            .message("검색할 유저의 식별코드를 입력하세요.\n${galleryDescription()}")
             .view(ManagementDialogUi.column(context, field))
             .action("다음") {
                 val value = field.text.trim()
@@ -153,7 +153,7 @@ internal class GallScopeSession(
 
     private fun modeDialog(ui: Ui): BrandDialog.Builder = ui.dialog()
         .title("갤스코프")
-        .message(targetUserId)
+        .message("$targetUserId\n${galleryDescription()}")
         .choices(arrayOf("게시글 검색", "댓글 검색"), -1) { choice ->
             mode = if (choice == 0) Mode.POSTS else Mode.COMMENTS
             if (choice == 1) search.resetComments()
@@ -192,7 +192,7 @@ internal class GallScopeSession(
 
         return ui.dialog()
             .title("${selectedMode.label} 검색")
-            .message(targetUserId)
+            .message("$targetUserId\n${galleryDescription()}")
             .view(content)
             .action("검색 시작") {
                 val parsedEnd = endField.text.trim().toIntOrNull()
@@ -225,7 +225,7 @@ internal class GallScopeSession(
         }
         return ui.dialog()
             .title("갤스코프")
-            .message("${mode?.label} 검색 중")
+            .message("${mode?.label} 검색 중\n${galleryDescription()}")
             .view(body)
             .action("최소화") { minimize() }
     }
@@ -254,6 +254,7 @@ internal class GallScopeSession(
         }
         return ui.dialog()
             .title("갤스코프 결과")
+            .message(galleryDescription())
             .view(content)
             .action("복사") { copyResults(snapshot) }
             .apply {
@@ -270,7 +271,7 @@ internal class GallScopeSession(
 
     private fun errorDialog(ui: Ui): BrandDialog.Builder = ui.dialog()
         .title("갤스코프")
-        .message(errorMessage)
+        .message("$errorMessage\n${galleryDescription()}")
         .action("다시 시도") {
             if (mode == null) step = Step.IDENTIFIER else step = Step.RANGE
             show()
@@ -329,6 +330,17 @@ internal class GallScopeSession(
     }
 
     private fun progressText() = "검색한 페이지 $progressDone / $progressTotal\n결과 ${progressResultCount}건"
+
+    private fun galleryDescription(): String {
+        val typeLabel = when (galleryType) {
+            "mgallery" -> "마이너갤러리"
+            "mini" -> "미니갤러리"
+            "gallery" -> "갤러리"
+            else -> "알 수 없는 유형"
+        }
+        return "$typeLabel ($galleryType)\n${galleryId.ifEmpty { "ID 없음" }}"
+    }
+
     private fun dp(value: Int): Int = (value * context.resources.displayMetrics.density + 0.5f).toInt()
 
     private fun minimize() {
