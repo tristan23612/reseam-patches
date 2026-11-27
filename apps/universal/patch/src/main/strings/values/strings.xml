@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="change_package_name">Change package name</string>
+    <string name="change_package_name_description">Installs the app under another package name, so it runs next to the original. Some apps don\'t work this way.</string>
+    <string name="change_package_name_package_name">Package name</string>
+    <string name="change_package_name_package_name_description">The new package name. Empty adds .reseam to the original.</string>
+    <string name="enable_debugging">Enable debugging</string>
+    <string name="enable_debugging_description">Marks the app debuggable, so adb can inspect it without root.</string>
+</resources>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_entry">Reseam settings entry</string>
+    <string name="settings_entry_description">Adds Reseam Settings entry</string>
+    <string name="hide_ads">Hide ads</string>
+    <string name="hide_ads_description">Adds Reseam Settings to hide ads</string>
+    <string name="hide_home_elements">Hide home elements</string>
+    <string name="hide_home_elements_description">Adds Reseam Settings to hide home elements</string>
+    <string name="spoof_signature">Spoof Signature</string>
+    <string name="spoof_signature_description">Spoof the signature of the app so that it can bypass signature checks</string>
+    <string name="hide_admin_notice">Hide admin notice</string>
+    <string name="hide_admin_notice_description">Adds Reseam Settings to hide admin notice</string>
+    <string name="hide_must_read_notice">Hide must read notice</string>
+    <string name="hide_must_read_notice_description">Adds Reseam Settings to hide must read notice</string>
+    <string name="disable_post_pum">Disable post pum option</string>
+    <string name="disable_post_pum_description">Adds Reseam Settings to disable post pum option</string>
+    <string name="hide_post_bottom_like_view">Hide post bottom like view</string>
+    <string name="hide_post_bottom_like_view_description">Adds Reseam Settings to hide post bottom like view</string>
+    <string name="show_user_id">Show user id</string>
+    <string name="show_user_id_description">Adds Reseam Settings to show user id</string>
+    <string name="enable_user_id_direct_scope">Enable userId direct scope</string>
+    <string name="enable_user_id_direct_scope_description">Adds Reseam Settings to enable userId direct scope</string>
+    <string name="post_long_press">Post long press</string>
+    <string name="post_long_press_description">Adds Reseam Settings to enable post long press</string>
+    <string name="gall_scope">Gall Scope</string>
+    <string name="gall_scope_description">Adds Reseam Settings to enable gall scope</string>
+    <string name="ban_list">Ban List</string>
+    <string name="ban_list_description">Adds Reseam Settings to enable ban list</string>
+</resources>
