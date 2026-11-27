@@ -247,6 +247,10 @@ internal class GallScopeSession(
             }
         }
         list.setOnItemClickListener { _, _, position, _ -> openResult(snapshot[position]) }
+        list.setOnItemLongClickListener { _, _, position, _ ->
+            copyResult(snapshot[position])
+            true
+        }
         val content = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             addView(summary)
@@ -377,6 +381,14 @@ internal class GallScopeSession(
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
         clipboard.setPrimaryClip(ClipData.newPlainText("GallScope Results", text))
         Toast.makeText(context, "검색 결과를 복사했습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun copyResult(result: GallScopeResult) {
+        val text = buildString {
+            append(result.title).append('\n').append(result.date).append('\n').append(result.url).append("\n\n")
+        }
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager ?: return
+        clipboard.setPrimaryClip(ClipData.newPlainText("GallScope Result", text))
     }
 
     private fun finish() {

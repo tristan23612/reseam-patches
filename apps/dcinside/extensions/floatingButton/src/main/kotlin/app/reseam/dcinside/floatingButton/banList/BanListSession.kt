@@ -251,7 +251,7 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
             override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                 val item = getItem(position) ?: JSONObject()
                 val title = item.optString(CONTENT_COLUMN).ifBlank { "(내용 없음)" }
-                return ui.listItem(title).supporting(formatIdentifierRow(item)).chevron()
+                return ui.listItem(title).supporting(formatIdentifierRow(item))
             }
         }
         list.setOnItemLongClickListener { _, _, position, _ ->
