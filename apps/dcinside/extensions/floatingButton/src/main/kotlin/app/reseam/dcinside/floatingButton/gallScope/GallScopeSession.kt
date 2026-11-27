@@ -133,6 +133,7 @@ internal class GallScopeSession(
             .title("갤스코프")
             .message("검색할 유저의 식별코드를 입력하세요.\n${galleryDescription()}")
             .view(ManagementDialogUi.column(context, field))
+            .dismissAction("취소")
             .action("다음") {
                 val value = field.text.trim()
                 if (value.isEmpty()) {
@@ -148,7 +149,6 @@ internal class GallScopeSession(
                 }
                 show()
             }
-            .dismissAction("취소")
     }
 
     private fun modeDialog(ui: Ui): BrandDialog.Builder = ui.dialog()
@@ -194,6 +194,7 @@ internal class GallScopeSession(
             .title("${selectedMode.label} 검색")
             .message("$targetUserId\n${galleryDescription()}")
             .view(content)
+            .dismissAction("취소")
             .action("검색 시작") {
                 val parsedEnd = endField.text.trim().toIntOrNull()
                 val parsedStart = startField?.text?.trim()?.toIntOrNull() ?: 1
@@ -207,7 +208,6 @@ internal class GallScopeSession(
                 if (results.isEmpty()) firstPage = startPage
                 startSearch()
             }
-            .dismissAction("취소")
     }
 
     private fun searchingDialog(ui: Ui): BrandDialog.Builder {
@@ -256,6 +256,7 @@ internal class GallScopeSession(
             .title("갤스코프 결과")
             .message(galleryDescription())
             .view(content)
+            .dismissAction("닫기")
             .action("복사") { copyResults(snapshot) }
             .apply {
                 if (!rangeExceeded) action("계속 검색") {
@@ -266,17 +267,16 @@ internal class GallScopeSession(
                     startSearch(append = true)
                 }
             }
-            .dismissAction("닫기")
     }
 
     private fun errorDialog(ui: Ui): BrandDialog.Builder = ui.dialog()
         .title("갤스코프")
         .message("$errorMessage\n${galleryDescription()}")
+        .dismissAction("닫기")
         .action("다시 시도") {
-            if (mode == null) step = Step.IDENTIFIER else step = Step.RANGE
+            step = if (mode == null) Step.IDENTIFIER else Step.RANGE
             show()
         }
-        .dismissAction("닫기")
 
     private fun startSearch(append: Boolean = false) {
         val selectedMode = mode ?: return
