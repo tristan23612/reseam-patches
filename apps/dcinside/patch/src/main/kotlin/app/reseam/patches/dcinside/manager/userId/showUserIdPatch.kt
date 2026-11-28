@@ -180,7 +180,7 @@ val showUserId = patch(DcinsidePatchStrings.showUserId) {
         }.let {
             val viewMethod = (it.instruction as Instruction.Invoke).field0.method.name
             val viewType = (it.instruction as Instruction.Invoke).field0.method.returnType
-            comment.before {
+            comment.after {
                 val userIdField = klass(comment.parameterTypes[2]).field("reseamUserId")
                 val userId = param(2).field(userIdField)
                 val view = param(0).callVirtual(
