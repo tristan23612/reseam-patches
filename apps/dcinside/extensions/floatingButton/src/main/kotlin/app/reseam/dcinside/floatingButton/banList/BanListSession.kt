@@ -211,11 +211,11 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
                     transitionTo(Step.FETCHING_LATEST_DATA)
                 }
             }
-            .dismissAction("취소")
             .action("Worker 설정") {
                 workerSettingsReturnStep = Step.ACTION_SELECTION
                 transitionTo(Step.WORKER_SETTINGS)
             }
+            .dismissAction("취소")
     }
 
     private fun identifierInputDialog(ui: Ui): BrandDialog.Builder {
@@ -228,11 +228,11 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
             .title("식별코드 조회")
             .message("DB에서 정확히 일치하는 식별코드를 찾습니다.\n${galleryDescription()}")
             .view(ManagementDialogUi.column(context, field))
-            .dismissAction("취소")
             .action("Worker 설정") {
                 workerSettingsReturnStep = Step.IDENTIFIER_INPUT
                 transitionTo(Step.WORKER_SETTINGS)
             }
+            .dismissAction("취소")
             .action("조회") {
                 identifier = normalizeIdentifier(field.text)
                 if (identifier.isEmpty()) {
@@ -271,8 +271,8 @@ internal class BanListSession(context: Context) : ManagementDialogSession<BanLis
             .title("식별코드 조회")
             .message(galleryDescription())
             .view(content)
-            .dismissAction("닫기")
             .action("복사") { copyIdentifierResults(snapshot) }
+            .dismissAction("닫기")
     }
 
     private fun fetchIdentifierResults() {
